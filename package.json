@@ -16,7 +16,8 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^18.1.0"
+    "electron": "^18.1.0",
+    "electron-packager": "^15.5.1"
   },
   "dependencies": {
     "NeteaseCloudMusicApi": "^4.5.12",
