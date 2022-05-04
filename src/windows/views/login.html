@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';img-src 'self' data: *;font-src *"
+    />
+    <link href="../styles/login.css" rel="stylesheet" />
+    <title>NetMusicUploader</title>
+  </head>
+  <body id="inbox">
+    <div class="login">
+      <!-- <input id="qrcodeInput" style="display: none" /> -->
+      <div class="login-title text-center">扫码登录</div>
+      <div class="qr-code">
+        <img id="qrcode" width="200px" />
+      </div>
+      <div class="login-foot" id="foot">
+        请使用<span style="color: #1875bf">网易云音乐APP</span>扫码
+      </div>
+    </div>
+    <!-- You can also require other files to run in this process -->
+  </body>
+</html>

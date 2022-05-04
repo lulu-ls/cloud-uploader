@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';img-src 'self' data: *;font-src *"
+    />
+    <link href="../styles/uploader.css" rel="stylesheet" />
+    <title>NetMusicUploader</title>
+  </head>
+  <body id="inbox">
+    <div class="container">
+      <div class="main">
+        <!-- 上传区域 -->
+        <div class="upload-block">
+          <div style="cursor: pointer">
+            <a href="#" title="点击上次文件">
+              <img
+                id="openFileSelect"
+                class="upload-image"
+                src="../../../assets/image/cloud-upload.svg"
+              />
+            </a>
+          </div>
+          <h3>· 将文件拖拽到此处释放</h3>
+          <h3>· 复制文件后粘贴到窗口</h3>
+        </div>
+
+        <!-- 上传列表展示 -->
+        <div class="half-left-circle" id="leftSlip">
+          <img src="../../../assets/image/left_slip.svg" title="查看列表" />
+        </div>
+        <div class="uploader-list" id="uploaderList">
+          <div class="half-right-circle" id="rightSlip" title="收起">
+            <img src="../../../assets/image/right_slip.svg" />
+          </div>
+
+          <div class="uploader-list-title">上传列表</div>
+          <div class="uploader-row-list">
+            <div class="uploader-list-none-item">暂无上传记录哟～</div>
+            <ul id="uploader-list">
+              <!-- <li>
+                <div class="uploader-row">
+                  <div class="uploader-row-title">
+                    霍元甲-周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦
+                  </div>
+                  <div class="loading"></div>
+                </div>
+              </li> -->
+              <!-- <li>
+                <div class="uploader-row">
+                  <div>霍元甲-周杰伦</div>
+                  <div class="finish"></div>
+                </div>
+              </li>
+              -->
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">©2022 AlexLiu</div>
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script>
+      //
+      // 选择文件上传逻辑
+      const inbox = document.querySelector('#openFileSelect');
+      inbox.onclick = fileSelect;
+
+      let wait = false;
+      function fileSelect(fn) {
+        // 判断之前的调用是否完成
+        if (wait) {
+          return;
+        }
+        window.electronAPI.fileSelect();
+        timeout = {};
+        wait = true;
+        setTimeout(() => {
+          wait = false;
+        }, 3000);
+      }
+
+      //
+      // 拖拽上传逻辑
+      const div = document.querySelector('#inbox');
+
+      //绑定拖拽结束事件
+      div.addEventListener('drop', function (e) {
+        //必须要阻止拖拽的默认事件
+        e.preventDefault();
+        e.stopPropagation();
+
+        //获得拖拽的文件集合
+        const files = e.dataTransfer.files;
+        const fileList = [];
+
+        for (let i = 0; i < files.length; i++) {
+          fileList.push(files[i].path);
+        }
+        window.electronAPI.dragSelect(fileList);
+      });
+
+      //绑定拖拽文件在容器移动事件
+      div.addEventListener('dragover', (e) => {
+        //必须要阻止拖拽的默认事件
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      const leftSlip = document.querySelector('#leftSlip');
+      const rightSlip = document.querySelector('#rightSlip');
+      const uploaderList = document.querySelector('#uploaderList');
+      leftSlip.style.display = 'none';
+      leftSlip.onclick = leftClick;
+      rightSlip.onclick = rightClick;
+      function leftClick() {
+        leftSlip.style.display = 'none';
+        // uploaderList.style.display = 'block';
+        uploaderList.setAttribute('class', 'uploader-list');
+      }
+      function rightClick() {
+        leftSlip.style.display = 'block';
+        // uploaderList.style.display = 'none';
+        uploaderList.setAttribute('class', 'uploader-list-none');
+      }
+    </script>
+  </body>
+</html>
