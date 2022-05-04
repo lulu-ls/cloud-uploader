@@ -1,0 +1,33 @@
+/* styles.css */
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.login-title {
+  font-size: 26px;
+  color: #3f3f3f;
+  margin-top: 20%;
+  margin-bottom: 5%;
+}
+
+.login-foot {
+  font-size: 14px;
+  color: #5a5a5a;
+  text-align: center;
+  margin-top: 4%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.qr-code {
+  text-align: center;
+  margin: auto;
+}
+/* Add styles here to customize the appearance of your app */
