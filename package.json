@@ -3,10 +3,21 @@
   "version": "1.0.0",
   "description": "net music cloud uploader",
   "main": "./src/main.js",
-  "scripts": {
-    "start": "electron ."
+  "build": {
+    "appId": "com.net-easy-cloud-music-uploader.app",
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "./assets/image/favicon.png"
+    }
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "scripts": {
+    "start": "electron .",
+    "pkg_mac": "electron-builder --mac --x64"
+  },
+  "repository": "https://github.com/lulu-ls/cloud-uploader.git",
   "keywords": [
     "net",
     "music",
@@ -17,7 +28,7 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^18.1.0",
-    "electron-packager": "^15.5.1"
+    "electron-builder": "^23.0.3"
   },
   "dependencies": {
     "NeteaseCloudMusicApi": "^4.5.12",

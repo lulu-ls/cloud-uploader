@@ -44,6 +44,11 @@ body {
   text-align: center;
   flex: 1;
 }
+
+.uploader-list-none-init {
+  display: none;
+}
+
 .uploader-list-none {
   animation: removeSlip 0.15s linear;
   -webkit-animation: removeSlip 0.15s linear;

@@ -3,7 +3,7 @@
 // 常量定义
 module.exports = {
   // 公共变量
-  COMMON_DEBUG: true,
+  COMMON_DEBUG: false, // 是否为调试模式
 
   // 登录窗口相关
   LOGIN_TITLE: '登录',

@@ -23,15 +23,16 @@
               />
             </a>
           </div>
-          <h3>· 将文件拖拽到此处释放</h3>
-          <h3>· 复制文件后粘贴到窗口</h3>
+          <h3>· 点击上方图标选择音乐</h3>
+          <h3>· 将音乐拖拽到此处释放</h3>
+          <h3>· 复制音乐后粘贴到窗口</h3>
         </div>
 
         <!-- 上传列表展示 -->
         <div class="half-left-circle" id="leftSlip">
           <img src="../../../assets/image/left_slip.svg" title="查看列表" />
         </div>
-        <div class="uploader-list" id="uploaderList">
+        <div class="uploader-list-none-init" id="uploaderList">
           <div class="half-right-circle" id="rightSlip" title="收起">
             <img src="../../../assets/image/right_slip.svg" />
           </div>
@@ -112,17 +113,14 @@
       const leftSlip = document.querySelector('#leftSlip');
       const rightSlip = document.querySelector('#rightSlip');
       const uploaderList = document.querySelector('#uploaderList');
-      leftSlip.style.display = 'none';
       leftSlip.onclick = leftClick;
       rightSlip.onclick = rightClick;
       function leftClick() {
         leftSlip.style.display = 'none';
-        // uploaderList.style.display = 'block';
         uploaderList.setAttribute('class', 'uploader-list');
       }
       function rightClick() {
         leftSlip.style.display = 'block';
-        // uploaderList.style.display = 'none';
         uploaderList.setAttribute('class', 'uploader-list-none');
       }
     </script>
