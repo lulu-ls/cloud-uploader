@@ -32,9 +32,10 @@ npm run pkg_mac
 
 ## 本项目参考以下资料
 
-### 写法思路参考下面这个项目，感谢大佬~
+### 写法思路和上传的 API 参考下面的项目，感谢大佬~
 
 - [electronic-wechat](https://github.com/geeeeeeeeek/electronic-wechat)
+- [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
 ### 相关学习资料：
 
