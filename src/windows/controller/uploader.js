@@ -205,7 +205,7 @@ class UploaderWindow {
     }
 
     Tools.showNotification({
-      title: '开始上传',
+      title: '上传完成',
       body: `共计${list.length}个音乐文件, 上传成功${successCount}个！`,
     });
   }
