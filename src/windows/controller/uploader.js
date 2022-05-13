@@ -133,7 +133,7 @@ class UploaderWindow {
 
     if (res.length <= 0) {
       Tools.dialog(this.uploaderWindow, {
-        title: '没有可上传文件',
+        detail: '没有可上传文件',
       });
       return;
     }
