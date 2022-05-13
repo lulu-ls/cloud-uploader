@@ -29,6 +29,7 @@ body {
 .main {
   display: flex;
   flex: 1;
+  overflow: auto;
 }
 
 .footer {
@@ -63,6 +64,7 @@ body {
   animation: showSlip 1s linear 0s;
   -webkit-animation: showSlip 0.15s linear 0s;
   position: relative;
+  overflow: auto;
 }
 @keyframes showSlip {
   from {
@@ -98,15 +100,18 @@ body {
 }
 
 .half-right-circle {
+  display: none;
   width: 30px;
   height: 60px;
   line-height: 60px;
   /* border: 1px solid #ccc; */
   position: absolute;
   top: 40%;
+  left: 61.8%;
   border-radius: 0 30px 30px 0;
   animation: twinkling 2s infinite 0.9s ease-in-out alternate;
   cursor: pointer;
+  z-index: 11;
 }
 .half-left-circle img,
 .half-right-circle img {

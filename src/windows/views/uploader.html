@@ -32,11 +32,10 @@
         <div class="half-left-circle" id="leftSlip">
           <img src="../../../assets/image/left_slip.svg" title="查看列表" />
         </div>
+        <div class="half-right-circle" id="rightSlip" title="收起">
+          <img src="../../../assets/image/right_slip.svg" />
+        </div>
         <div class="uploader-list-none-init" id="uploaderList">
-          <div class="half-right-circle" id="rightSlip" title="收起">
-            <img src="../../../assets/image/right_slip.svg" />
-          </div>
-
           <div class="uploader-list-title">上传列表</div>
           <div class="uploader-row-list">
             <div class="uploader-list-none-item">暂无上传记录哟～</div>
@@ -49,6 +48,7 @@
                   <div class="loading"></div>
                 </div>
               </li> -->
+
               <!-- <li>
                 <div class="uploader-row">
                   <div>霍元甲-周杰伦</div>
@@ -117,10 +117,12 @@
       rightSlip.onclick = rightClick;
       function leftClick() {
         leftSlip.style.display = 'none';
+        rightSlip.style.display = 'block';
         uploaderList.setAttribute('class', 'uploader-list');
       }
       function rightClick() {
         leftSlip.style.display = 'block';
+        rightSlip.style.display = 'none';
         uploaderList.setAttribute('class', 'uploader-list-none');
       }
     </script>
