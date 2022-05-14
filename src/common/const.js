@@ -17,6 +17,12 @@ module.exports = {
   UPLOADER_WINDOW_SIZE_HEIGHT: 600,
   UPLOADER_WINDOW_SIZE_MIN_WIDTH: 350,
   UPLOADER_WINDOW_SIZE_MIN_HEIGHT: 550,
+  // UPLOADER_UPLOAD_INTERVAL_TIME: 100, // 上传间隔，避免频繁请求接口导致失败，也可以用下面这种配置方式
+  UPLOADER_UPLOAD_INTERVAL_TIME: {
+    // 上传间隔会在 min 和 max 之间随机，更有效的避免频率限制导致的失败
+    Min: 1000,
+    Max: 3000,
+  },
 
   // 网易云音乐api
   CLOUD_MUSIC_SUCCESS_STATUS: 200,

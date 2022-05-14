@@ -34,7 +34,7 @@ class UploaderWindow {
   }
 
   createWindow() {
-    // 登录
+    // 上传
     this.uploaderWindow = new BrowserWindow({
       title: Const.UPLOADER_TITLE,
       // resizable: false,
@@ -88,7 +88,6 @@ class UploaderWindow {
             click: () => {
               const clip = require('electron-clipboard-ex');
               const fileList = clip.readFilePaths();
-
               this.startUpload(fileList);
             },
           },
@@ -113,37 +112,88 @@ class UploaderWindow {
   }
 
   // 获取可上传列表
-  check(fileList) {
-    const res = [];
-
-    if (!Array.isArray(fileList)) {
-      return;
-    }
-
-    // 获取音频文件
-    for (let i = 0; i < fileList.length; i++) {
-      if (Tools.isAudio(fileList[i])) {
-        const name = path.basename(fileList[i]);
-        res.push({
-          path: fileList[i],
-          name: name,
-        });
+  async check(fileList) {
+    return new Promise(async (resolve, reject) => {
+      if (!Array.isArray(fileList)) {
+        resolve([]);
+        return;
       }
-    }
 
-    if (res.length <= 0) {
-      Tools.dialog(this.uploaderWindow, {
-        detail: '没有可上传文件',
+      // 获取音频文件
+      const res = await this.folderFiles(fileList);
+
+      if (res.length <= 0) {
+        Tools.dialog(this.uploaderWindow, {
+          detail: '没有可上传文件',
+        });
+        resolve([]);
+        return;
+      }
+
+      Tools.showNotification({
+        title: '开始上传',
+        body: `共计${res.length}个音乐文件, 请耐心等待！`,
       });
+
+      resolve(res);
       return;
-    }
-
-    Tools.showNotification({
-      title: '开始上传',
-      body: `共计${res.length}个音乐文件, 请耐心等待！`,
     });
+  }
 
-    return res;
+  folderFiles(fileList) {
+    return new Promise(async (resolve, reject) => {
+      const res = [];
+
+      for (let i = 0; i < fileList.length; i++) {
+        const element = fileList[i];
+        if (Tools.isAudio(element)) {
+          const name = path.basename(element);
+          res.push({
+            path: element,
+            name: name,
+          });
+        } else {
+          const parentFolder = await this.isFolder(element);
+          if (!parentFolder) {
+            continue;
+          }
+
+          const chiList = await this.readFolder(element);
+          const chiItems = await this.folderFiles(chiList);
+          res.push(...chiItems);
+        }
+      }
+
+      resolve(res);
+    });
+  }
+
+  readFolder(dir) {
+    return new Promise((resolve, reject) => {
+      fs.readdir(dir, function (err, files) {
+        if (err) {
+          Logger.def('上传失败，读取文件夹失败：', dir, err);
+          resolve([]);
+        }
+
+        const fullPathRes = files.map((v) => path.join(dir, v));
+        resolve(fullPathRes);
+      });
+    });
+  }
+
+  isFolder(dir) {
+    return new Promise((resolve, reject) => {
+      fs.stat(dir, function (err, stat) {
+        if (err) {
+          Logger.def('上传失败，判断是否是文件错误：', dir, err);
+          resolve(false);
+          return;
+        }
+        resolve(stat.isDirectory());
+        // stat.isFile()
+      });
+    });
   }
 
   async fileSelect() {
@@ -151,7 +201,7 @@ class UploaderWindow {
       const res = await dialog.showOpenDialog({
         title: '请选择需要上传的音乐',
         buttonLabel: '开始上传',
-        properties: ['openFile', 'multiSelections'],
+        properties: ['openFile', 'openDirectory', 'multiSelections'],
       });
 
       if (res.canceled) {
@@ -159,7 +209,6 @@ class UploaderWindow {
         this.logger.log(this.uploaderWindow, { detail: '未选择任何文件' });
         return;
       }
-
       this.startUpload(res.filePaths);
     } catch (error) {
       this.logger.error(error);
@@ -173,7 +222,12 @@ class UploaderWindow {
   }
 
   async startUpload(files = []) {
-    const list = this.check(files);
+    const list = await this.check(files);
+
+    if (!list || list.length <= 0) {
+      return;
+    }
+
     this.logger.log('开始上传列表: ', list);
 
     this.sendReceiveUploadList(list);
@@ -210,7 +264,33 @@ class UploaderWindow {
     });
   }
 
-  sleep(time = 1000) {
+  sleep(time) {
+    if (!time && Const.UPLOADER_UPLOAD_INTERVAL_TIME) {
+      if (
+        Const.UPLOADER_UPLOAD_INTERVAL_TIME.Max &&
+        Const.UPLOADER_UPLOAD_INTERVAL_TIME.Min
+      ) {
+        // 生成 max 和 min 之间的随机数
+        time = parseInt(
+          Math.random() *
+            (Const.UPLOADER_UPLOAD_INTERVAL_TIME.Max -
+              Const.UPLOADER_UPLOAD_INTERVAL_TIME.Min +
+              1) +
+            Const.UPLOADER_UPLOAD_INTERVAL_TIME.Min,
+          10
+        );
+      } else {
+        time = Const.UPLOADER_UPLOAD_INTERVAL_TIME;
+      }
+    }
+
+    // 如果没读取到配置 则给默认值
+    if (!time) {
+      time = 1000;
+    }
+
+    this.logger.info('上传休息时间为：' + time);
+
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve();

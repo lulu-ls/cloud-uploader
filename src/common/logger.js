@@ -8,6 +8,12 @@ class Logger {
     }
   }
 
+  static def(...data) {
+    if (Const.COMMON_DEBUG) {
+      console.log(...data);
+    }
+  }
+
   log(...data) {
     if (Const.COMMON_DEBUG) {
       console.log(this.prefix(), ...data);
