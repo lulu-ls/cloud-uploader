@@ -7,6 +7,9 @@ const Const = require('../../common/const');
 const Logger = require('../../common/logger');
 const Tools = require('../../common/tools');
 const Store = require('../../common/store');
+const Config = require('../../common/config');
+const { PageEvent } = require('../../common/event');
+const { config } = require('process');
 
 class UploaderWindow {
   constructor() {
@@ -36,7 +39,7 @@ class UploaderWindow {
   createWindow() {
     // 上传
     this.uploaderWindow = new BrowserWindow({
-      title: Const.UPLOADER_TITLE,
+      title: Const.UPLOADER_WINDOW_TITLE,
       // resizable: false,
       // icon: nativeImage.createFromPath(
       //   path.join(__dirname, '../../../assets/image/cloud-upload.png')
@@ -75,6 +78,21 @@ class UploaderWindow {
     this.uploaderWindow.webContents.send('upload-item-success', data);
   }
 
+  // 发送签到成功消息到前端
+  sendSignInSuccess(data) {
+    this.uploaderWindow.webContents.send('sign-in-success', !!data);
+  }
+
+  // 发送刷歌成功消息到前端
+  sendListenFinished(data) {
+    this.uploaderWindow.webContents.send('listen-finished', !!data);
+  }
+
+  // 发送配置到前端
+  sendConfig() {
+    this.uploaderWindow.webContents.send('config-info', Config.info());
+  }
+
   // 监测粘贴事件
   initMenu() {
     const menu = new Menu();
@@ -108,6 +126,21 @@ class UploaderWindow {
     ipcMain.on('drag-select', (event, files) => {
       this.logger.log('receive drag-select event!', files);
       this.startUpload(files);
+    });
+
+    ipcMain.on('logout', (event) => {
+      this.logger.log('receive logout event!');
+      PageEvent.emit(Const.LOGIN_LOGOUT_EVENT_TOPIC);
+    });
+
+    ipcMain.on('auto-sign-in-set', (event, flag) => {
+      this.logger.log('receive auto-sign-in-set event!', flag);
+      PageEvent.emit(Const.SIGN_IN_SET_AUTO_EVENT_TOPIC, flag);
+    });
+
+    ipcMain.on('auto-listen-set', (event, flag) => {
+      this.logger.log('receive auto-listen-set event!', flag);
+      PageEvent.emit(Const.LISTEN_SET_AUTO_EVENT_TOPIC, flag);
     });
   }
 
@@ -284,18 +317,12 @@ class UploaderWindow {
       }
     }
 
-    // 如果没读取到配置 则给默认值
-    if (!time) {
-      time = 1000;
-    }
+    this.logger.info(`本次上传休息时间为 ${time} 毫秒`);
+    return Tools.sleep(time);
+  }
 
-    this.logger.info('上传休息时间为：' + time);
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, time);
-    });
+  logoutTopic() {
+    PageEvent.emit(Const.LOGIN_LOGOUT_EVENT_TOPIC);
   }
 }
 

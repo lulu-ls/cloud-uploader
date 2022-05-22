@@ -60,11 +60,112 @@
           </div>
         </div>
       </div>
-      <div class="footer">©2022 AlexLiu</div>
+
+      <!-- 测试代码 -->
+      <!-- <div id="logout">退出登录</div> -->
+      <!-- <div id="autoSignIn">自动签到</div>
+      <div id="autoSignInCancel">取消自动签到</div>
+      <div id="autoListen">自动刷歌</div>
+      <div id="autoListenCancel">取消自动刷歌</div> -->
+
+      <div class="footer">
+        <div class="footer-content">
+          <div class="footer-content-copyright">©2022 AlexLiu</div>
+          <div id="setting-loading">
+            <span>同步状态中···</span>
+            <div class="loading"></div>
+          </div>
+          <div id="setting-content" style="display: none">
+            <div class="footer-content-setting">
+              <div class="footer-content-setting-item">
+                <input type="checkbox" id="autoSignInBox" />
+                <span
+                  class="footer-content-setting-item-text"
+                  id="autoSignInText"
+                  >自动签到</span
+                >
+                <div
+                  class="loading"
+                  style="display: none"
+                  id="autoSignInLoading"
+                ></div>
+                <img
+                  class="setting-success"
+                  src="../../../assets/image/sign-in.svg"
+                  id="autoSignInSuccess"
+                  style="display: none"
+                />
+              </div>
+              <div class="footer-content-setting-item">
+                <input type="checkbox" id="autoListenBox" />
+                <span
+                  class="footer-content-setting-item-text"
+                  id="autoListenText"
+                  >自动刷歌</span
+                >
+                <div
+                  class="loading"
+                  style="display: none"
+                  id="autoListenLoading"
+                ></div>
+                <img
+                  class="setting-success"
+                  src="../../../assets/image/sign-in.svg"
+                  id="autoListenFinished"
+                  style="display: none"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="footer-logout" id="logout" title="退出登录">
+            <img width="15px" src="../../../assets/image/logout.svg" />
+            <!-- <span>退出登录</span> -->
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- You can also require other files to run in this process -->
     <script>
+      // 自动刷歌
+      const autoListenBox = document.querySelector('#autoListenBox');
+      autoListenBox.onclick = autoListenChange;
+
+      function autoListenChange() {
+        // console.log('listen', this.checked);
+        if (this.checked) {
+          autoListenBox.checked = true;
+          autoListenText.innerHTML = '正在刷歌';
+          autoListenLoading.style.display = 'block';
+          autoListenFinished.style.display = 'none';
+        }
+
+        window.electronAPI.setAutoListen(this.checked);
+      }
+
+      // // 自动签到
+      const autoSignInBox = document.querySelector('#autoSignInBox');
+      autoSignInBox.onclick = autoSignInChange;
+
+      function autoSignInChange() {
+        // console.log('sign', this.checked);
+        if (this.checked) {
+          autoSignInBox.checked = true;
+          autoSignInText.innerHTML = '同步中···';
+          autoSignInLoading.style.display = 'block';
+          autoSignInSuccess.style.display = 'none';
+        }
+        window.electronAPI.setAutoSignIn(this.checked);
+      }
+
+      // 退出登录
+      const logoutEle = document.querySelector('#logout');
+      logoutEle.onclick = logout;
+
+      function logout() {
+        window.electronAPI.logout();
+      }
+
       //
       // 选择文件上传逻辑
       const inbox = document.querySelector('#openFileSelect');

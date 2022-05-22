@@ -62,6 +62,19 @@ class Tools {
     const suffix = fileName.split('.').pop();
     return all.includes(suffix);
   }
+
+  static sleep(time) {
+    return new Promise((resolve, reject) => {
+      // 如果没读取到配置 则给默认值
+      if (!time) {
+        time = 1000;
+      }
+
+      setTimeout(() => {
+        resolve();
+      }, time);
+    });
+  }
 }
 
 module.exports = Tools;

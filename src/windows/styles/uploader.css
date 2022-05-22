@@ -35,10 +35,11 @@ body {
 .footer {
   height: 24px;
   line-height: 24px;
-  text-align: center;
+  /* text-align: center; */
   color: #bebebe;
   background-color: #f0f0f0;
   font-size: 12px;
+  display: flex;
 }
 
 .upload-block {
@@ -198,4 +199,43 @@ ul {
   100% {
     opacity: 1; /*透明度为1*/
   }
+}
+
+.footer-logout {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 0 10px;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.footer-content-copyright {
+  flex: 1;
+  text-align: center;
+  align-items: center;
+}
+
+.footer-content-setting {
+  display: flex;
+  min-width: 200px;
+}
+
+.footer-content-setting-item {
+  display: flex;
+  height: 16px;
+  padding: 0 15px;
+  align-items: center;
+  border-right: #d8d8d8 1px solid;
+}
+
+.footer-content-setting-item-text {
+  padding: 0 3px;
+}
+.setting-success {
+  width: 12px;
 }

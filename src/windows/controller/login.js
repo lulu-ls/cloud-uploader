@@ -47,9 +47,14 @@ class LoginWindow {
   }
 
   createWindow() {
+    if (this.loginWindow) {
+      this.logger.info('登录窗口已注册');
+      return;
+    }
+
     // 登录
     this.loginWindow = new BrowserWindow({
-      title: Const.LOGIN_TITLE,
+      title: Const.LOGIN_WINDOW_TITLE,
       resizable: false,
       // icon: path.join(__dirname, '../../../assets/icon.png'),
       width: Const.LOGIN_WINDOW_SIZE_WIDTH,
@@ -68,6 +73,7 @@ class LoginWindow {
   show() {
     this.loginWindow.show();
     this.loginWindow.focus();
+    this.init();
   }
 
   hide() {
@@ -90,8 +96,13 @@ class LoginWindow {
       this.sendUpdateQrCode(qrInfo.qrimg);
       this.updateQrCodeState(key);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
     }
+  }
+
+  // 注销其实就是清空存储信息
+  logout() {
+    Store.clear();
   }
 
   async qrCodeKey() {
