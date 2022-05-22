@@ -34,6 +34,8 @@ class Listen {
 
     let listenCount = 0;
     if (!this.check()) {
+      this.setListenedDate();
+
       const playList = await this.playList();
       this.logger.info(`本次刷歌歌单列表：${playList}`);
 
@@ -67,7 +69,6 @@ class Listen {
           }
         }
       }
-      this.setListenedDate();
 
       this.logger.info(`今日刷歌完成，共计 ${listenCount - 1} 首 ~ ~`);
     }
