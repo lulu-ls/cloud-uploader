@@ -2,13 +2,15 @@
 
 #### 主要是为了解决 MAC 版本网易云音乐无上传音乐至云盘的功能，感觉很不方便，所以自己用 Electron 写了个工具，同时也希望能帮助到你 ~~
 
+##### 顺手写了自动签到、自动刷歌 300 首功能，祝你早日成为 10 级大佬 ^ ^
+
 #### 首页
 
-![](https://github.com/lulu-ls/assets/blob/main/main.png?row=true)
+![](https://github.com/lulu-ls/assets/blob/main/main-1.1.1.jpg?row=true)
 
 #### 上传
 
-![](https://github.com/lulu-ls/assets/blob/main/upload.png?row=true)
+![](https://github.com/lulu-ls/assets/blob/main/upload-1.1.1.jpg?row=true)
 
 ## 使用方法
 
@@ -34,13 +36,18 @@ npm run pkg_mac
 ## 功能
  - 登录
  - 上传音乐至我的云盘
- 
- **计划**
+ - 退出登录
  - 每日自动签到
  - 每日自动刷歌 300 首
 
 ## 更新日志
  - 5/14 新增选择文件夹批量上传，上传间隔随机（缓解批量上传部分可能错误的问题）
+ - 5/22 新增  
+  - 1. 退出登录  
+  - 2. 自动签到  
+  - 3. 自动刷歌 300 首   
+   ** 每日自动签到及自动刷歌 300，想了想并没有引入第三方定时库（太大[少则几十到几百个个依赖]且没必要）去做这件事。而是在每次窗口激活，去检查配置及是否已完成操作       
+   ** 每日刷歌逻辑，获取用户每日推荐歌单，默认听歌 500 首为止，虽然每日上限 300，因为存在已听歌曲，默认设置了 200 首的冗余，可在配置文件修改  
 
 ## 本项目参考以下资料
 
@@ -48,6 +55,9 @@ npm run pkg_mac
 
 - [electronic-wechat](https://github.com/geeeeeeeeek/electronic-wechat)
 - [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+
+**刷歌思路参考下面项目**
+- [netease-cloud-api](https://github.com/ZainCheung/netease-cloud-api)
 
 ### 相关学习资料：
 
