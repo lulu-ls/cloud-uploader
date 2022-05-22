@@ -75,6 +75,7 @@ class Listen {
         }
       }
       this.setListenedDate();
+      this.setListening(false);
 
       this.logger.info(`今日刷歌完成，共计 ${listenCount - 1} 首 ~ ~`);
     }
