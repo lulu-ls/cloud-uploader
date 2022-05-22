@@ -34,39 +34,39 @@ class Listen {
 
     let listenCount = 0;
     if (!this.check()) {
-      // const playList = await this.playList();
-      // this.logger.info(`本次刷歌歌单列表：${playList}`);
+      const playList = await this.playList();
+      this.logger.info(`本次刷歌歌单列表：${playList}`);
 
-      // topLoop: for (let i = 0; i < playList.length; i++) {
-      //   this.logger.info(
-      //     `-------------------当前歌单: < ${playList[i].name} > -------------------`
-      //   );
-      //   const list = await this.playListDetail(playList[i].id);
+      topLoop: for (let i = 0; i < playList.length; i++) {
+        this.logger.info(
+          `-------------------当前歌单: < ${playList[i].name} > -------------------`
+        );
+        const list = await this.playListDetail(playList[i].id);
 
-      //   for (let k = 0; k < list.length; k++) {
-      //     // 如果已达刷歌上线，则退出循环
-      //     if (
-      //       Const.LISTEN_MAX_COUNT != -1 &&
-      //       listenCount > Const.LISTEN_MAX_COUNT
-      //     ) {
-      //       break topLoop;
-      //     }
+        for (let k = 0; k < list.length; k++) {
+          // 如果已达刷歌上线，则退出循环
+          if (
+            Const.LISTEN_MAX_COUNT != -1 &&
+            listenCount > Const.LISTEN_MAX_COUNT
+          ) {
+            break topLoop;
+          }
 
-      //     // todo 听歌
-      //     await Tools.sleep(Const.LISTEN_SLEEP_TIME);
-      //     try {
-      //       await this.feedback(list[k]);
-      //       listenCount++;
-      //     } catch (error) {
-      //       this.logger.info(
-      //         `听歌失败，当前歌单：${playList[i].name},休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`
-      //       );
-      //       this.logger.error('当前歌曲：', list[i]);
-      //       this.logger.error('错误：', error);
-      //       await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
-      //     }
-      //   }
-      // }
+          // todo 听歌
+          await Tools.sleep(Const.LISTEN_SLEEP_TIME);
+          try {
+            await this.feedback(list[k]);
+            listenCount++;
+          } catch (error) {
+            this.logger.info(
+              `听歌失败，当前歌单：${playList[i].name},休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`
+            );
+            this.logger.error('当前歌曲：', list[i]);
+            this.logger.error('错误：', error);
+            await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
+          }
+        }
+      }
       this.setListenedDate();
 
       this.logger.info(`今日刷歌完成，共计 ${listenCount - 1} 首 ~ ~`);
