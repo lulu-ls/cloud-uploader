@@ -4,11 +4,11 @@
 
 #### 首页
 
-![](https://github.com/lulu-ls/assets/blob/main/main-1.1.1.png?row=true)
+![](https://github.com/lulu-ls/assets/blob/main/main-1.1.1.jpg?row=true)
 
 #### 上传
 
-![](https://github.com/lulu-ls/assets/blob/main/upload-1.1.1.png?row=true)
+![](https://github.com/lulu-ls/assets/blob/main/upload-1.1.1.jpg?row=true)
 
 ## 使用方法
 
