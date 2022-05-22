@@ -26,6 +26,11 @@ const schema = {
     type: 'string',
     default: '',
   },
+  listening: {
+    // 自动刷歌是否进行中
+    type: 'boolean',
+    default: false,
+  },
   autoListen: {
     // 自动刷歌是否开启
     type: 'boolean',

@@ -32,9 +32,14 @@ class Listen {
       return;
     }
 
+    if (this.getListening()) {
+      this.logger.info('自动刷歌进行中');
+      return;
+    }
+
     let listenCount = 0;
     if (!this.check()) {
-      this.setListenedDate();
+      this.setListening(true);
 
       const playList = await this.playList();
       this.logger.info(`本次刷歌歌单列表：${playList}`);
@@ -69,6 +74,7 @@ class Listen {
           }
         }
       }
+      this.setListenedDate();
 
       this.logger.info(`今日刷歌完成，共计 ${listenCount - 1} 首 ~ ~`);
     }
@@ -299,6 +305,14 @@ class Listen {
     );
 
     return now === currSignedDate;
+  }
+
+  setListening(flag = true) {
+    Store.set('listening', flag);
+  }
+
+  getListening() {
+    return !!Store.get('listening');
   }
 
   // 设置已听歌
