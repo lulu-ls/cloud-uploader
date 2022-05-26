@@ -57,6 +57,7 @@ class Tools {
       'mpg',
       'mkv',
       'flac',
+      'wav',
     ];
 
     const suffix = fileName.split('.').pop();
