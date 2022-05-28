@@ -58,7 +58,28 @@ class CloudUploader {
     });
 
     app.on('activate', () => {
+      this.logger.info('窗口激活事件 activate～');
       this.activeWindow();
+    });
+
+    app.on('window-all-closed', async () => {
+      this.logger.info('窗口关闭事件 window-all-closed～', process.platform);
+      await this.closeWindow();
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+    });
+  }
+
+  async closeWindow() {
+    return new Promise((resolve) => {
+      if (this.listen) {
+        this.listen.setListening(false);
+      }
+
+      this.loginWindow = null;
+      this.uploaderWindow = null;
+      resolve();
     });
   }
 

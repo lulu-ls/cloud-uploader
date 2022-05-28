@@ -1,8 +1,6 @@
 const {
   recommend_resource,
-  user_level,
   playlist_track_all,
-  weblog,
   scrobble,
 } = require('NeteaseCloudMusicApi');
 
@@ -40,44 +38,59 @@ class Listen {
     let listenCount = 0;
     if (!this.check()) {
       this.setListening(true);
+      let isErr = false;
+      try {
+        const playList = await this.playList();
+        this.logger.info(`本次刷歌歌单列表：${playList}`);
 
-      const playList = await this.playList();
-      this.logger.info(`本次刷歌歌单列表：${playList}`);
+        topLoop: for (let i = 0; i < playList.length; i++) {
+          this.logger.info(
+            `-------------------当前歌单: < ${playList[i].name} > -------------------`
+          );
 
-      topLoop: for (let i = 0; i < playList.length; i++) {
-        this.logger.info(
-          `-------------------当前歌单: < ${playList[i].name} > -------------------`
-        );
-        const list = await this.playListDetail(playList[i].id);
+          const list = await this.playListDetail(playList[i].id);
 
-        for (let k = 0; k < list.length; k++) {
-          // 如果已达刷歌上线，则退出循环
-          if (
-            Const.LISTEN_MAX_COUNT != -1 &&
-            listenCount > Const.LISTEN_MAX_COUNT
-          ) {
-            break topLoop;
-          }
+          for (let k = 0; k < list.length; k++) {
+            // 如果已达刷歌上线，则退出循环
+            if (
+              Const.LISTEN_MAX_COUNT != -1 &&
+              listenCount > Const.LISTEN_MAX_COUNT
+            ) {
+              break topLoop;
+            }
 
-          // todo 听歌
-          await Tools.sleep(Const.LISTEN_SLEEP_TIME);
-          try {
-            await this.feedback(list[k]);
-            listenCount++;
-          } catch (error) {
-            this.logger.info(
-              `听歌失败，当前歌单：${playList[i].name},休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`
-            );
-            this.logger.error('当前歌曲：', list[i]);
-            this.logger.error('错误：', error);
-            await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
+            // todo 听歌
+            await Tools.sleep(Const.LISTEN_SLEEP_TIME);
+            try {
+              await this.feedback(list[k]);
+              listenCount++;
+            } catch (error) {
+              this.logger.error('当前歌曲：', list[i]);
+              this.logger.error('错误：', error);
+              this.logger.info(
+                `听歌失败，当前歌单：${playList[i].name},休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`
+              );
+              await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
+            }
           }
         }
+      } catch (error) {
+        isErr = true;
+        this.logger.info(
+          `刷歌报错，err：${error}，休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`
+        );
+        await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
+      } finally {
+        this.setListening(false);
       }
-      this.setListenedDate();
-      this.setListening(false);
 
-      this.logger.info(`今日刷歌完成，共计 ${listenCount - 1} 首 ~ ~`);
+      if (!isErr) {
+        this.setListenedDate();
+        this.logger.info(`今日刷歌完成，共计 ${listenCount - 1} 首 ~ ~`);
+      } else {
+        this.asyncState();
+        return;
+      }
     }
 
     this.listenedEvent();
@@ -222,7 +235,7 @@ class Listen {
 
         if (res && res.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
           this.logger.info(
-            `听歌反馈成功, 歌曲信息 ${song.id} 歌曲名称 「${song.name}」`
+            `听歌反馈成功, 歌曲id ${song.id} 歌曲名称 「${song.name}」`
           );
           resolve();
         } else {
