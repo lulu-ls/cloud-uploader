@@ -20,6 +20,7 @@ class Listen {
   async init() {
     this.logger = new Logger('Listen');
 
+    this.setListening(false);
     this.onSetAutoListenTopic();
   }
 
@@ -30,13 +31,15 @@ class Listen {
       return;
     }
 
-    if (this.getListening()) {
-      this.logger.info('自动刷歌进行中');
-      return;
-    }
-
     let listenCount = 0;
     if (!this.check()) {
+      if (this.getListening()) {
+        this.logger.info('自动刷歌进行中');
+        setTimeout(() => {
+          this.setListening(false);
+        }, 1000 * 60);
+        return;
+      }
       this.setListening(true);
       let isErr = false;
       try {
