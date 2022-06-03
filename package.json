@@ -1,6 +1,7 @@
 {
   "name": "cloud-uploader",
   "version": "1.1.2",
+  "author": "ms-liu, Inc <liu7@gmx.com>",
   "description": "net music cloud uploader",
   "main": "./src/main.js",
   "build": {
@@ -11,11 +12,18 @@
         "zip"
       ],
       "icon": "./assets/image/favicon.png"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "icon": "./assets/image/favicon.png"
     }
   },
   "scripts": {
     "start": "electron .",
-    "pkg_mac": "electron-builder --mac --x64"
+    "pkg_mac": "electron-builder --mac --x64",
+    "pkg_linux": "electron-builder --linux --x64"
   },
   "repository": "https://github.com/lulu-ls/cloud-uploader.git",
   "keywords": [
@@ -24,7 +32,6 @@
     "upload",
     "cloud"
   ],
-  "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^19.0.1",
