@@ -1,16 +1,21 @@
-const { BrowserWindow } = require('electron');
+const { BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const {
   login_qr_key,
   login_qr_create,
   login_qr_check,
   login_status,
+
+  login_cellphone,
+  login,
 } = require('NeteaseCloudMusicApi');
 
 const Const = require('../../common/const');
 const Logger = require('../../common/logger');
 const Store = require('../../common/store');
 const { PageEvent } = require('../../common/event');
+const Tools = require('../../common/tools');
+const Config = require('../../common/config');
 
 class LoginWindow {
   constructor() {
@@ -21,22 +26,21 @@ class LoginWindow {
     this.interval = null;
 
     this.init();
+    // this.accountLogin();
   }
 
-  init() {
+  async init() {
     this.logger = new Logger('LoginWindow');
 
     this.createWindow();
     this.debug();
 
-    this.generateQrCode();
+    this.initIPCOn();
 
-    // test code
-    //
-    // const img =
-    //   'data:image/png;base64,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';
-    // this.sendUpdateQrCode(img);
-    // this.sendUpdateScanState('登录中...');
+    if (Config.getLoginType() === Const.LOGIN_ACCOUNT_TYPE_CODE) {
+      await Tools.sleep();
+      this.generateQrCode();
+    }
   }
 
   debug() {
@@ -44,6 +48,48 @@ class LoginWindow {
     if (this.loginWindow && Const.COMMON_DEBUG) {
       this.loginWindow.webContents.openDevTools();
     }
+  }
+
+  // 初始化事件监听
+  initIPCOn() {
+    // ipcMain;
+    ipcMain.on('login-type-change', (event, data) => {
+      this.logger.log('receive login-type-change event! type: ' + data);
+      this.changeLoginType(data);
+    });
+
+    ipcMain.on('login-by-account', (event, data) => {
+      this.logger.log('receive login-by-account event!', data);
+      data.type = LoginWindow.getLoginType();
+      this.accountLogin(data);
+    });
+  }
+
+  // 发送配置到前端
+  sendLoginType() {
+    this.loginWindow.webContents.send('login-type', Config.getLoginType());
+  }
+
+  // 更换登录类型
+  changeLoginType(type) {
+    switch (type) {
+      case Const.LOGIN_ACCOUNT_TYPE_CODE:
+        LoginWindow.setLoginType(Const.LOGIN_ACCOUNT_TYPE_CODE);
+        this.generateQrCode();
+        break;
+      case Const.LOGIN_ACCOUNT_TYPE_PHONE:
+        this.clearQrInterval();
+        LoginWindow.setLoginType(Const.LOGIN_ACCOUNT_TYPE_PHONE);
+        break;
+      case Const.LOGIN_ACCOUNT_TYPE_EMAIL:
+        this.clearQrInterval();
+        LoginWindow.setLoginType(Const.LOGIN_ACCOUNT_TYPE_EMAIL);
+        break;
+      default:
+        this.logger.error('登录类型未知，设置失败');
+    }
+
+    this.sendLoginType();
   }
 
   createWindow() {
@@ -98,11 +144,6 @@ class LoginWindow {
     } catch (error) {
       this.logger.error(error);
     }
-  }
-
-  // 注销其实就是清空存储信息
-  logout() {
-    Store.clear();
   }
 
   async qrCodeKey() {
@@ -181,31 +222,6 @@ class LoginWindow {
     // 800 为二维码过期,801 为等待扫码,802 为待确认,803 为授权登录成功(803 状态码下会返回 cookies)
 
     this.interval = setInterval(async () => {
-      // {
-      //   status: 200,
-      //   body: {
-      //     code: 801,
-      //     message: '等待扫码',
-      //     cookie: 'NMTID=00O6qTtcwpWsSRZQE2KlAjdg5exwREAAAGAg5Lvtw; Max-Age=315360000; Expires=Thu, 29 Apr 2032 07:01:26 GMT; Path=/;'
-      //   },
-      //   cookie: [
-      //     'NMTID=00O6qTtcwpWsSRZQE2KlAjdg5exwREAAAGAg5Lvtw; Max-Age=315360000; Expires=Thu, 29 Apr 2032 07:01:26 GMT; Path=/;'
-      //   ]
-      // }
-
-      // {
-      //   status: 200,
-      //   body: {
-      //     code: 803,
-      //     message: '授权登陆成功',
-      //     cookie: 'MUSIC_R_T=149446871820 .......... Expires=Sat, 20 May 2090 10:31:26 GMT; Path=/openapi/clientlog; HTTPOnly'
-      //   },
-      //   cookie: [
-      //     'MUSIC_R_T=1494468718209; Max-Age=2147483647; Expires=Sat, 20 May 2090 10:31:26 GMT; Path=/weapi/clientlog; HTTPOnly',
-      //     '..........',
-      //     'MUSIC_A_T=1494468690506; Max-Age=2147483647; Expires=Sat, 20 May 2090 10:31:26 GMT; Path=/openapi/clientlog; HTTPOnly'
-      //   ]
-      // }
       const stateRes = await login_qr_check({
         key,
       });
@@ -219,7 +235,7 @@ class LoginWindow {
             Store.set('isLogin', true);
             Store.set('cookie', stateRes.body.cookie);
 
-            clearInterval(this.interval);
+            this.clearQrInterval();
             this.loginedEvent();
           }
 
@@ -238,12 +254,59 @@ class LoginWindow {
     }, 3000);
   }
 
-  static getCookie() {
-    return Store.get('cookie');
-  }
+  /* 账号密码登录 */
+  async accountLogin(accountInfo = {}) {
+    const { type, account, password } = accountInfo;
+    // this.logger.info(`调用账号密码登录，类型：${type}，账户：${account}`);
 
-  static getIsLogin() {
-    return Store.get('isLogin');
+    const md5Password = Tools.md5(password);
+
+    try {
+      if (type === Const.LOGIN_ACCOUNT_TYPE_PHONE) {
+        const res = await login_cellphone({
+          phone: account,
+          md5_password: md5Password,
+        });
+
+        this.logger.info(res);
+
+        if (res && res.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
+          Store.set('isLogin', true);
+          Store.set('cookie', res.body.cookie);
+
+          this.loginedEvent();
+        }
+
+        this.logger.info('手机登录完成');
+        return;
+      }
+
+      if (type === Const.LOGIN_ACCOUNT_TYPE_EMAIL) {
+        const res = await login({
+          email: account,
+          md5_password: md5Password,
+        });
+
+        this.logger.info(res);
+
+        if (res && res.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
+          Store.set('isLogin', true);
+          Store.set('cookie', res.body.cookie);
+
+          this.loginedEvent();
+        }
+
+        this.logger.info('邮箱登录完成');
+        return;
+      }
+
+      this.logger.error('登录类型未知');
+    } catch (error) {
+      this.logger.error('登录失败，error：', error);
+      Tools.dialog(this.uploaderWindow, {
+        detail: '登录失败，请检查账号密码',
+      });
+    }
   }
 
   // 检查登录状态
@@ -269,6 +332,38 @@ class LoginWindow {
     return false;
   }
 
+  clearQrInterval() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
+    this.logger.info('清除二维码登录定时器成功');
+  }
+
+  static getCookie() {
+    return Store.get('cookie');
+  }
+
+  static getIsLogin() {
+    return Store.get('isLogin');
+  }
+
+  static getLoginType() {
+    return Store.get('loginType');
+  }
+
+  static setLoginType(type) {
+    return Store.set('loginType', type);
+  }
+
+  // 注销其实就是清空存储信息
+  static logout() {
+    // 登录类型不清除
+    const loginType = LoginWindow.getLoginType();
+    Store.clear();
+    LoginWindow.setLoginType(loginType);
+  }
+
   // login event
   loginedEvent() {
     PageEvent.emit(Const.LOGIN_SUCCESS_EVENT_TOPIC);
@@ -276,3 +371,10 @@ class LoginWindow {
 }
 
 module.exports = LoginWindow;
+
+// test code
+// new LoginWindow().accountLogin({
+//   account: '',
+//   type: 1,
+//   password: '',
+// });

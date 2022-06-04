@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const Logger = require('../common/logger');
+const Const = require('../common/const');
 
 class LoginPreload {
   constructor() {
@@ -25,7 +26,8 @@ class LoginPreload {
     // All of the Node.js APIs are available in the preload process.
     // It has the same sandbox as a Chrome extension.
     contextBridge.exposeInMainWorld('electronAPI', {
-      // msg: (data) => ipcRenderer.send('msg-send', data),
+      changeLoginType: (data) => ipcRenderer.send('login-type-change', data),
+      loginByAccount: (data) => ipcRenderer.send('login-by-account', data),
     });
   }
 
@@ -42,6 +44,35 @@ class LoginPreload {
       this.logger.log('收到更新扫码请求', data);
       const foot = document.querySelector('#foot');
       foot.innerHTML = data;
+    });
+
+    // 接收到登录状态
+    ipcRenderer.on('login-type', (event, type) => {
+      this.logger.log('收到登录类型请求', type);
+
+      const eleQr = document.querySelector(`#login-by-qr`);
+      const elePhone = document.querySelector(`#login-by-phone`);
+      const eleEmail = document.querySelector(`#login-by-email`);
+
+      switch (type) {
+        case Const.LOGIN_ACCOUNT_TYPE_CODE:
+          eleQr.style.display = 'block';
+          elePhone.style.display = 'none';
+          eleEmail.style.display = 'none';
+          break;
+        case Const.LOGIN_ACCOUNT_TYPE_PHONE:
+          eleQr.style.display = 'none';
+          elePhone.style.display = 'block';
+          eleEmail.style.display = 'none';
+          break;
+        case Const.LOGIN_ACCOUNT_TYPE_EMAIL:
+          eleQr.style.display = 'none';
+          elePhone.style.display = 'none';
+          eleEmail.style.display = 'block';
+          break;
+        default:
+          this.logger.error('登录类型未知，设置失败');
+      }
     });
   }
 }

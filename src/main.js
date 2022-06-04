@@ -65,6 +65,7 @@ class CloudUploader {
     app.on('window-all-closed', async () => {
       this.logger.info('窗口关闭事件 window-all-closed～', process.platform);
       await this.closeWindow();
+      // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
       if (process.platform !== 'darwin') {
         app.quit();
       }
@@ -77,8 +78,8 @@ class CloudUploader {
         this.listen.setListening(false);
       }
 
-      this.loginWindow = null;
-      this.uploaderWindow = null;
+      // this.loginWindow = null;
+      // this.uploaderWindow = null;
       resolve();
     });
   }
@@ -92,19 +93,29 @@ class CloudUploader {
   }
 
   activeLoginWindow(logout) {
+    if (logout) {
+      LoginWindow.logout();
+    }
+
     if (this.loginWindow) {
       this.loginWindow.show();
     } else {
       this.loginWindow = new LoginWindow();
     }
 
-    if (logout) {
-      this.loginWindow.logout();
-    }
+    this.loginWindow.loginWindow.on('closed', async () => {
+      this.logger.info('登录窗口关闭事件 closed～', process.platform);
+      this.loginWindow = null;
+      // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
+    });
 
     if (this.uploaderWindow) {
       this.uploaderWindow.hide();
     }
+
+    setTimeout(() => {
+      this.loginWindow.sendLoginType();
+    }, 1500);
   }
 
   activeUploaderWindow() {
@@ -113,6 +124,12 @@ class CloudUploader {
     } else {
       this.uploaderWindow = new UploaderWindow();
     }
+
+    this.uploaderWindow.uploaderWindow.on('closed', async () => {
+      this.logger.info('上传窗口关闭事件 closed～', process.platform);
+      this.uploaderWindow = null;
+      // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
+    });
 
     // 首次直接发前端可能初始化问题，导致收不到消息，后边再研究下
     setTimeout(() => {

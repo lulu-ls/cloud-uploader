@@ -76,6 +76,15 @@ class Tools {
       }, time);
     });
   }
+
+  // md5 加密
+  static md5(msg = '') {
+    const crypto = require('crypto');
+    const hash = crypto.createHash('md5');
+    // 可任意多次调⽤update():
+    hash.update(msg);
+    return hash.digest('hex');
+  }
 }
 
 module.exports = Tools;

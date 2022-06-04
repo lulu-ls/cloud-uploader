@@ -1,4 +1,5 @@
 const Store = require('./store');
+const Const = require('./const');
 
 class Config {
   constructor() {}
@@ -18,6 +19,15 @@ class Config {
   // 获取自动签到配置
   static getAutoSignIn() {
     return Store.get('autoSignIn');
+  }
+
+  // 获取登录类型
+  static getLoginType() {
+    const res = Store.get('loginType');
+    if (!res) {
+      return Const.LOGIN_ACCOUNT_TYPE_CODE;
+    }
+    return res;
   }
 }
 

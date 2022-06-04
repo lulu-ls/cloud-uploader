@@ -36,6 +36,11 @@ const schema = {
     type: 'boolean',
     default: false,
   },
+  loginType: {
+    // 登录类型
+    type: 'number',
+    default: 0,
+  },
 };
 
 const store = new Store(schema);

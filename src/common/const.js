@@ -11,6 +11,9 @@ module.exports = {
   LOGIN_WINDOW_SIZE_HEIGHT: 550,
   LOGIN_SUCCESS_EVENT_TOPIC: 'login-success',
   LOGIN_LOGOUT_EVENT_TOPIC: 'login-logout',
+  LOGIN_ACCOUNT_TYPE_CODE: 0, // 二维码登录
+  LOGIN_ACCOUNT_TYPE_PHONE: 1, // 手机号登录
+  LOGIN_ACCOUNT_TYPE_EMAIL: 2, // 邮箱登录
 
   // 上传窗口
   UPLOADER_WINDOW_TITLE: '上传音乐',
