@@ -72,7 +72,7 @@ npm run pkg_linux
 - [electron/electron-quick-start](https://github.com/electron/electron-quick-start) - a very basic starter Electron app
 - [hokein/electron-sample-apps](https://github.com/hokein/electron-sample-apps) - small demo apps for the various Electron APIs
 
-## 如果有任何疑问或者建议欢迎 PR，也可以加
+## 如果有任何疑问或者建议欢迎ISSUE/PR，也可以加
 
 QQ 群：853469710
 
