@@ -359,9 +359,9 @@ class LoginWindow {
   // 注销其实就是清空存储信息
   static logout() {
     // 登录类型不清除
-    const loginType = LoginWindow.getLoginType();
+    // const loginType = LoginWindow.getLoginType();
     Store.clear();
-    LoginWindow.setLoginType(loginType);
+    // LoginWindow.setLoginType(loginType);
   }
 
   // login event
