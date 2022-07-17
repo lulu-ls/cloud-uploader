@@ -38,6 +38,7 @@ class CloudUploader {
 
       // 登录成功
       PageEvent.on(Const.LOGIN_SUCCESS_EVENT_TOPIC, () => {
+        this.loginWindow.destroy();
         this.activeUploaderWindow();
       });
 
@@ -105,6 +106,7 @@ class CloudUploader {
 
     this.loginWindow.loginWindow.on('closed', async () => {
       this.logger.info('登录窗口关闭事件 closed～', process.platform);
+      this.loginWindow.destroy();
       this.loginWindow = null;
       // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
     });
@@ -114,7 +116,9 @@ class CloudUploader {
     }
 
     setTimeout(() => {
-      this.loginWindow.sendLoginType();
+      if (this.loginWindow) {
+        this.loginWindow.sendLoginType();
+      }
     }, 1500);
   }
 
@@ -133,7 +137,9 @@ class CloudUploader {
 
     // 首次直接发前端可能初始化问题，导致收不到消息，后边再研究下
     setTimeout(() => {
-      this.uploaderWindow.sendConfig();
+      if (this.uploaderWindow) {
+        this.uploaderWindow.sendConfig();
+      }
 
       this.signIn.asyncState();
       this.listen.asyncState();

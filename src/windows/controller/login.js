@@ -37,10 +37,12 @@ class LoginWindow {
 
     this.initIPCOn();
 
-    if (Config.getLoginType() === Const.LOGIN_ACCOUNT_TYPE_CODE) {
-      await Tools.sleep();
-      this.generateQrCode();
-    }
+    setTimeout(async () => {
+      if (Config.getLoginType() === Const.LOGIN_ACCOUNT_TYPE_CODE) {
+        await Tools.sleep();
+        this.generateQrCode();
+      }
+    }, 3000);
   }
 
   debug() {
@@ -65,6 +67,11 @@ class LoginWindow {
     });
   }
 
+  ipcRemove() {
+    ipcMain.removeAllListeners('login-type-change');
+    ipcMain.removeAllListeners('login-by-account');
+  }
+
   // 发送配置到前端
   sendLoginType() {
     this.loginWindow.webContents.send('login-type', Config.getLoginType());
@@ -72,17 +79,17 @@ class LoginWindow {
 
   // 更换登录类型
   changeLoginType(type) {
+    this.clearQrInterval();
+
     switch (type) {
       case Const.LOGIN_ACCOUNT_TYPE_CODE:
         LoginWindow.setLoginType(Const.LOGIN_ACCOUNT_TYPE_CODE);
         this.generateQrCode();
         break;
       case Const.LOGIN_ACCOUNT_TYPE_PHONE:
-        this.clearQrInterval();
         LoginWindow.setLoginType(Const.LOGIN_ACCOUNT_TYPE_PHONE);
         break;
       case Const.LOGIN_ACCOUNT_TYPE_EMAIL:
-        this.clearQrInterval();
         LoginWindow.setLoginType(Const.LOGIN_ACCOUNT_TYPE_EMAIL);
         break;
       default:
@@ -97,6 +104,8 @@ class LoginWindow {
       this.logger.info('登录窗口已注册');
       return;
     }
+
+    this.logger.info('注册登录窗口');
 
     // 登录
     this.loginWindow = new BrowserWindow({
@@ -135,6 +144,9 @@ class LoginWindow {
   }
 
   async generateQrCode() {
+    this.logger.info('创建登录二维码');
+    this.clearQrInterval();
+
     try {
       const key = await this.qrCodeKey();
       const qrInfo = await this.createQrCode(key);
@@ -222,6 +234,7 @@ class LoginWindow {
     // 800 为二维码过期,801 为等待扫码,802 为待确认,803 为授权登录成功(803 状态码下会返回 cookies)
 
     this.interval = setInterval(async () => {
+      console.log(this.interval);
       const stateRes = await login_qr_check({
         key,
       });
@@ -357,16 +370,28 @@ class LoginWindow {
   }
 
   // 注销其实就是清空存储信息
-  static logout() {
+  static async logout() {
     // 登录类型不清除
-    // const loginType = LoginWindow.getLoginType();
-    Store.clear();
-    // LoginWindow.setLoginType(loginType);
+    const loginType = LoginWindow.getLoginType();
+    await Store.clear();
+    // Store.delete()
+    setTimeout(() => {
+      try {
+        LoginWindow.setLoginType(loginType);
+      } catch (error) {
+        Logger.def(error);
+      }
+    }, 0);
   }
 
   // login event
   loginedEvent() {
     PageEvent.emit(Const.LOGIN_SUCCESS_EVENT_TOPIC);
+  }
+
+  destroy() {
+    this.clearQrInterval();
+    this.ipcRemove();
   }
 }
 
