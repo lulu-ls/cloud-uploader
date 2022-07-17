@@ -71,7 +71,11 @@ class LoginWindow {
 
   // 发送配置到前端
   sendLoginType() {
-    this.loginWindow.webContents.send('login-type', Config.getLoginType());
+    try {
+      this.loginWindow.webContents.send('login-type', Config.getLoginType());
+    } catch (error) {
+      Logger.def(error);
+    }
   }
 
   // 更换登录类型
@@ -131,11 +135,19 @@ class LoginWindow {
   }
 
   sendUpdateQrCode(data) {
-    this.loginWindow.webContents.send('update-qr-code', data);
+    try {
+      this.loginWindow.webContents.send('update-qr-code', data);
+    } catch (error) {
+      Logger.def(err);
+    }
   }
 
   sendUpdateScanState(data) {
-    this.loginWindow.webContents.send('update-scan-state', data);
+    try {
+      this.loginWindow.webContents.send('update-scan-state', data);
+    } catch (error) {
+      Logger.def(error);
+    }
   }
 
   async generateQrCode() {

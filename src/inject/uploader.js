@@ -139,7 +139,7 @@ class UploadPreload {
     for (let index = 0; index < data.length; index++) {
       str += this.createItemTemplate(data[index]);
     }
-    ul.innerHTML = str;
+    ul.innerHTML += str;
   }
 
   // 创建模版

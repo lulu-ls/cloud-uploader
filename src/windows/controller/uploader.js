@@ -70,27 +70,47 @@ class UploaderWindow {
 
   // 发送上传列表到前端
   sendReceiveUploadList(data = []) {
-    this.uploaderWindow.webContents.send('display-upload-list', data);
+    try {
+      this.uploaderWindow.webContents.send('display-upload-list', data);
+    } catch (error) {
+      Logger.def(error);
+    }
   }
 
   // 发送上传成功消息到前端
   sendUploadItemSuccess(data = {}) {
-    this.uploaderWindow.webContents.send('upload-item-success', data);
+    try {
+      this.uploaderWindow.webContents.send('upload-item-success', data);
+    } catch (error) {
+      Logger.def(error);
+    }
   }
 
   // 发送签到成功消息到前端
   sendSignInSuccess(data) {
-    this.uploaderWindow.webContents.send('sign-in-success', !!data);
+    try {
+      this.uploaderWindow.webContents.send('sign-in-success', !!data);
+    } catch (error) {
+      Logger.def(error);
+    }
   }
 
   // 发送刷歌成功消息到前端
   sendListenFinished(data) {
-    this.uploaderWindow.webContents.send('listen-finished', !!data);
+    try {
+      this.uploaderWindow.webContents.send('listen-finished', !!data);
+    } catch (error) {
+      Logger.def(error);
+    }
   }
 
   // 发送配置到前端
   sendConfig() {
-    this.uploaderWindow.webContents.send('config-info', Config.info());
+    try {
+      this.uploaderWindow.webContents.send('config-info', Config.info());
+    } catch (error) {
+      Logger.def(error);
+    }
   }
 
   // 监测粘贴事件
