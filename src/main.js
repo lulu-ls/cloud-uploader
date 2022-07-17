@@ -38,7 +38,8 @@ class CloudUploader {
 
       // 登录成功
       PageEvent.on(Const.LOGIN_SUCCESS_EVENT_TOPIC, () => {
-        this.loginWindow.destroy();
+        this.loginWindow.loginWindow.destroy();
+        // this.loginWindow.destroy();
         this.activeUploaderWindow();
       });
 
@@ -106,7 +107,6 @@ class CloudUploader {
 
     this.loginWindow.loginWindow.on('closed', async () => {
       this.logger.info('登录窗口关闭事件 closed～', process.platform);
-      this.loginWindow.destroy();
       this.loginWindow = null;
       // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
     });

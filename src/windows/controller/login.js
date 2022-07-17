@@ -23,7 +23,6 @@ class LoginWindow {
 
     this.loginWindow = null;
     this.session = null;
-    this.interval = null;
 
     this.init();
     // this.accountLogin();
@@ -37,12 +36,10 @@ class LoginWindow {
 
     this.initIPCOn();
 
-    setTimeout(async () => {
-      if (Config.getLoginType() === Const.LOGIN_ACCOUNT_TYPE_CODE) {
-        await Tools.sleep();
-        this.generateQrCode();
-      }
-    }, 3000);
+    if (Config.getLoginType() === Const.LOGIN_ACCOUNT_TYPE_CODE) {
+      await Tools.sleep();
+      this.generateQrCode();
+    }
   }
 
   debug() {
@@ -79,8 +76,6 @@ class LoginWindow {
 
   // 更换登录类型
   changeLoginType(type) {
-    this.clearQrInterval();
-
     switch (type) {
       case Const.LOGIN_ACCOUNT_TYPE_CODE:
         LoginWindow.setLoginType(Const.LOGIN_ACCOUNT_TYPE_CODE);
@@ -145,7 +140,6 @@ class LoginWindow {
 
   async generateQrCode() {
     this.logger.info('创建登录二维码');
-    this.clearQrInterval();
 
     try {
       const key = await this.qrCodeKey();
@@ -233,37 +227,38 @@ class LoginWindow {
   async updateQrCodeState(key) {
     // 800 为二维码过期,801 为等待扫码,802 为待确认,803 为授权登录成功(803 状态码下会返回 cookies)
 
-    this.interval = setInterval(async () => {
-      console.log(this.interval);
-      const stateRes = await login_qr_check({
-        key,
-      });
+    const stateRes = await login_qr_check({
+      key,
+    });
 
-      this.logger.info(stateRes);
+    this.logger.info(stateRes);
 
-      if (stateRes.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
-        if (stateRes.body) {
-          // 如果登录成功记录 cookie，发送登录成功通知
-          if (stateRes.body.code === Const.CLOUD_MUSIC_SCAN_FINISHED_STATUS) {
-            Store.set('isLogin', true);
-            Store.set('cookie', stateRes.body.cookie);
+    if (stateRes.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
+      if (stateRes.body) {
+        // 更新二维码状态
+        if (stateRes.body.code !== Const.CLOUD_MUSIC_SCAN_WAIT_STATUS) {
+          this.sendUpdateScanState(stateRes.body.message);
+        }
 
-            this.clearQrInterval();
-            this.loginedEvent();
-          }
+        // 如果登录成功记录 cookie，发送登录成功通知
+        if (stateRes.body.code === Const.CLOUD_MUSIC_SCAN_FINISHED_STATUS) {
+          Store.set('isLogin', true);
+          Store.set('cookie', stateRes.body.cookie);
 
-          // 如果二维码过期自动更新
-          if (stateRes.body.code === Const.CLOUD_MUSIC_SCAN_EXPIRE_STATUS) {
-            this.generateQrCode();
-            return;
-          }
+          this.loginedEvent();
+          return;
+        }
 
-          // 更新二维码状态
-          if (stateRes.body.code !== Const.CLOUD_MUSIC_SCAN_WAIT_STATUS) {
-            this.sendUpdateScanState(stateRes.body.message);
-          }
+        // 如果二维码过期自动更新
+        if (stateRes.body.code === Const.CLOUD_MUSIC_SCAN_EXPIRE_STATUS) {
+          this.generateQrCode();
+          return;
         }
       }
+    }
+
+    setTimeout(() => {
+      this.updateQrCodeState(key);
     }, 3000);
   }
 
@@ -324,8 +319,8 @@ class LoginWindow {
 
   // 检查登录状态
   static async checkLogin() {
-    const isLogin = this.getIsLogin();
-    const cookie = this.getCookie();
+    const isLogin = LoginWindow.getIsLogin();
+    const cookie = LoginWindow.getCookie();
 
     if (!isLogin || !cookie) {
       return false;
@@ -343,14 +338,6 @@ class LoginWindow {
     }
 
     return false;
-  }
-
-  clearQrInterval() {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-
-    this.logger.info('清除二维码登录定时器成功');
   }
 
   static getCookie() {
@@ -372,16 +359,16 @@ class LoginWindow {
   // 注销其实就是清空存储信息
   static async logout() {
     // 登录类型不清除
-    const loginType = LoginWindow.getLoginType();
-    await Store.clear();
+    // const loginType = LoginWindow.getLoginType();
+    Store.clear();
     // Store.delete()
-    setTimeout(() => {
-      try {
-        LoginWindow.setLoginType(loginType);
-      } catch (error) {
-        Logger.def(error);
-      }
-    }, 0);
+    // setTimeout(() => {
+    //   try {
+    //     LoginWindow.setLoginType(loginType);
+    //   } catch (error) {
+    //     Logger.def(error);
+    //   }
+    // }, 0);
   }
 
   // login event
@@ -390,7 +377,6 @@ class LoginWindow {
   }
 
   destroy() {
-    this.clearQrInterval();
     this.ipcRemove();
   }
 }
