@@ -34,6 +34,10 @@ class UploadPreload {
 
       signIn: (flag) => ipcRenderer.send('auto-sign', flag),
       listen: (flag) => ipcRenderer.send('auto-listen', flag),
+
+      openUrl: (url) => {
+        this.openDefaultBrowser(url);
+      },
     });
   }
 
@@ -181,6 +185,21 @@ class UploadPreload {
 
   getDate() {
     return new Date().toISOString().split('T').shift();
+  }
+
+  openDefaultBrowser(url) {
+    var exec = require('child_process').exec;
+    console.log(process.platform);
+    switch (process.platform) {
+      case 'darwin':
+        exec('open ' + url);
+        break;
+      case 'win32':
+        exec('start ' + url);
+        break;
+      default:
+        exec('xdg-open', [url]);
+    }
   }
 }
 
