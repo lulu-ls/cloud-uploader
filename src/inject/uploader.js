@@ -56,28 +56,32 @@ class UploadPreload {
     });
 
     // 更新签到成功状态
-    ipcRenderer.on('sign-in-success', (event) => {
-      this.logger.log('接收到签到成功消息');
-      const autoSignInText = document.querySelector('#autoSignInText');
-      const autoSignInLoading = document.querySelector('#autoSignInLoading');
-      const autoSignInSuccess = document.querySelector('#autoSignInSuccess');
+    ipcRenderer.on('finished', (event, type) => {
+      if (type === 1) {
+        this.logger.log('接收到签到成功消息');
+        const autoSignInText = document.querySelector('#autoSignInText');
+        const autoSignInLoading = document.querySelector('#autoSignInLoading');
+        const autoSignInSuccess = document.querySelector('#autoSignInSuccess');
 
-      autoSignInText.innerHTML = '已签到';
-      autoSignInLoading.style.display = 'none';
-      autoSignInSuccess.style.display = 'block';
-    });
+        autoSignInText.innerHTML = '已签到';
+        autoSignInLoading.style.display = 'none';
+        autoSignInSuccess.style.display = 'block';
+      } else if (type === 2) {
+        // 更新刷歌成功状态
+        this.logger.log('接收到刷歌成功消息');
 
-    // 更新刷歌成功状态
-    ipcRenderer.on('listen-finished', (event) => {
-      this.logger.log('接收到刷歌成功消息');
+        const autoListenLoading = document.querySelector('#autoListenLoading');
+        const autoListenFinished = document.querySelector(
+          '#autoListenFinished'
+        );
+        const autoListenText = document.querySelector('#autoListenText');
 
-      const autoListenLoading = document.querySelector('#autoListenLoading');
-      const autoListenFinished = document.querySelector('#autoListenFinished');
-      const autoListenText = document.querySelector('#autoListenText');
+        autoListenText.innerHTML = '刷歌完成';
+        autoListenLoading.style.display = 'none';
+        autoListenFinished.style.display = 'block';
+      }
 
-      autoListenText.innerHTML = '刷歌完成';
-      autoListenLoading.style.display = 'none';
-      autoListenFinished.style.display = 'block';
+      this.logger.error('未知通知类型');
     });
   }
 

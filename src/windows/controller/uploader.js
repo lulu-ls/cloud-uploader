@@ -1,4 +1,4 @@
-const { BrowserWindow, Menu, MenuItem, ipcMain, dialog } = require('electron');
+const { Menu, MenuItem, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { cloud } = require('NeteaseCloudMusicApi');
@@ -7,114 +7,21 @@ const Const = require('../../common/const');
 const Logger = require('../../common/logger');
 const Tools = require('../../common/tools');
 const Store = require('../../common/store');
-const Config = require('../../common/config');
 const { PageEvent } = require('../../common/event');
-const { config } = require('process');
+const BaseWindow = require('./base');
 
-class UploaderWindow {
+class UploaderWindow extends BaseWindow {
   constructor() {
-    this.uploaderWindow = null;
-    this.logger = null;
+    super();
+    this.config = Const.UPLOAD_WINDOW;
+    this.name = 'UploaderWindow';
 
     this.init();
-  }
-
-  debug() {
-    // Open the DevTools.
-    if (this.uploaderWindow && Const.COMMON_DEBUG) {
-      this.uploaderWindow.webContents.openDevTools();
-    }
-  }
-
-  init() {
-    this.logger = new Logger('UploaderWindow');
-
-    this.createWindow();
-    this.initMenu();
-    this.initIPCOn();
-
-    this.debug();
-  }
-
-  createWindow() {
-    // 上传
-    this.uploaderWindow = new BrowserWindow({
-      title: Const.UPLOADER_WINDOW_TITLE,
-      // resizable: false,
-      // icon: nativeImage.createFromPath(
-      //   path.join(__dirname, '../../../assets/image/cloud-upload.png')
-      // ),
-      width: Const.UPLOADER_WINDOW_SIZE_WIDTH,
-      height: Const.UPLOADER_WINDOW_SIZE_HEIGHT,
-      minWidth: Const.UPLOADER_WINDOW_SIZE_MIN_WIDTH,
-      minHeight: Const.UPLOADER_WINDOW_SIZE_MIN_HEIGHT,
-
-      webPreferences: {
-        preload: path.join(__dirname, '../../inject/uploader.js'),
-      },
-    });
-
-    this.uploaderWindow.loadFile(
-      path.join(__dirname, '../views/uploader.html')
-    );
-  }
-
-  show() {
-    this.uploaderWindow.show();
-    this.uploaderWindow.focus();
-  }
-
-  hide() {
-    this.uploaderWindow.hide();
-  }
-
-  // 发送上传列表到前端
-  sendReceiveUploadList(data = []) {
-    try {
-      this.uploaderWindow.webContents.send('display-upload-list', data);
-    } catch (error) {
-      Logger.def(error);
-    }
-  }
-
-  // 发送上传成功消息到前端
-  sendUploadItemSuccess(data = {}) {
-    try {
-      this.uploaderWindow.webContents.send('upload-item-success', data);
-    } catch (error) {
-      Logger.def(error);
-    }
-  }
-
-  // 发送签到成功消息到前端
-  sendSignInSuccess(data) {
-    try {
-      this.uploaderWindow.webContents.send('sign-in-success', !!data);
-    } catch (error) {
-      Logger.def(error);
-    }
-  }
-
-  // 发送刷歌成功消息到前端
-  sendListenFinished(data) {
-    try {
-      this.uploaderWindow.webContents.send('listen-finished', !!data);
-    } catch (error) {
-      Logger.def(error);
-    }
-  }
-
-  // 发送配置到前端
-  sendConfig() {
-    try {
-      this.uploaderWindow.webContents.send('config-info', Config.info());
-    } catch (error) {
-      Logger.def(error);
-    }
+    this.register();
   }
 
   // 监测粘贴事件
-  initMenu() {
+  register() {
     const menu = new Menu();
     menu.append(
       new MenuItem({
@@ -135,33 +42,19 @@ class UploaderWindow {
     Menu.setApplicationMenu(menu);
   }
 
-  // 注册IPC事件监听
-  initIPCOn() {
-    // ipcMain;
-    ipcMain.on('file-select', (event) => {
-      this.logger.log('receive file-select event!');
-      this.fileSelect();
-    });
+  // 发送签到成功消息到前端 'sign-in-success'
+  sendSignInSuccess() {
+    this.sendMsg('finished', Const.SIGN_IN_FINISHED_TYPE);
+  }
 
-    ipcMain.on('drag-select', (event, files) => {
-      this.logger.log('receive drag-select event!', files);
-      this.startUpload(files);
-    });
-
-    ipcMain.on('logout', (event) => {
-      this.logger.log('receive logout event!');
-      PageEvent.emit(Const.LOGIN_LOGOUT_EVENT_TOPIC);
-    });
-
-    ipcMain.on('auto-sign-in-set', (event, flag) => {
-      this.logger.log('receive auto-sign-in-set event!', flag);
-      PageEvent.emit(Const.SIGN_IN_SET_AUTO_EVENT_TOPIC, flag);
-    });
-
-    ipcMain.on('auto-listen-set', (event, flag) => {
-      this.logger.log('receive auto-listen-set event!', flag);
-      PageEvent.emit(Const.LISTEN_SET_AUTO_EVENT_TOPIC, flag);
-    });
+  // 发送刷歌成功消息到前端
+  sendListenFinished() {
+    this.sendMsg('finished', Const.SIGN_IN_FINISHED_TYPE);
+    try {
+      this.uploaderWindow.webContents.send('listen-finished', !!data);
+    } catch (error) {
+      Logger.def(error);
+    }
   }
 
   // 获取可上传列表
@@ -283,7 +176,8 @@ class UploaderWindow {
 
     this.logger.log('开始上传列表: ', list);
 
-    this.sendReceiveUploadList(list);
+    // 发送上传列表到前端
+    this.sendMsg('display-upload-list', list);
 
     let successCount = 0;
     try {
@@ -298,11 +192,13 @@ class UploaderWindow {
             data: fs.readFileSync(element.path),
           },
           cookie: this.getCookie(),
+          proxy: Const.PROXY_ADDRESS,
         });
 
         if (res && res.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
           successCount++;
-          this.sendUploadItemSuccess(element);
+          // 发送上传成功消息到前端
+          this.sendMsg('upload-item-success', element);
         } else {
           this.logger.error('上传失败, 元素为: ', element);
         }
