@@ -1,4 +1,4 @@
-const { app } = require('electron');
+const { app, ipcMain } = require('electron');
 
 const LoginWindow = require('./windows/controller/login');
 const UploaderWindow = require('./windows/controller/uploader');
@@ -6,6 +6,7 @@ const SignIn = require('./windows/controller/signIn');
 
 const Logger = require('./common/logger');
 const Const = require('./common/const');
+const Tools = require('./common/tools');
 const { PageEvent } = require('./common/event');
 const Listen = require('./windows/controller/listen');
 
@@ -36,10 +37,39 @@ class CloudUploader {
     app.on('ready', () => {
       this.activeWindow();
 
+      ipcMain.on('login-by-account', (event, data) => {
+        this.logger.log('receive login-by-account event!', data);
+        this.loginWindow.accountLogin(data);
+      });
+
+      ipcMain.on('logout', (event) => {
+        this.logger.log('receive logout event!');
+        this.activeLoginWindow(true);
+      });
+
+      ipcMain.on('auto-sign', (event, flag) => {
+        this.logger.log('receive auto-sign-in-set event!', flag);
+        this.signIn.asyncState();
+      });
+
+      // uploader
+      ipcMain.on('file-select', (event) => {
+        this.logger.log('receive file-select event!');
+        this.uploaderWindow.fileSelect();
+      });
+
+      ipcMain.on('drag-select', (event, files) => {
+        this.logger.log('receive drag-select event!', files);
+        this.uploaderWindow.startUpload(files);
+      });
+
+      ipcMain.on('auto-listen', (event, flag) => {
+        this.logger.log('receive auto-listen-set event!', flag);
+        this.listen.asyncState();
+      });
+
       // 登录成功
       PageEvent.on(Const.LOGIN_SUCCESS_EVENT_TOPIC, () => {
-        this.loginWindow.loginWindow.destroy();
-        // this.loginWindow.destroy();
         this.activeUploaderWindow();
       });
 
@@ -60,13 +90,12 @@ class CloudUploader {
     });
 
     app.on('activate', () => {
-      this.logger.info('窗口激活事件 activate～');
+      this.logger.info('主窗口激活事件 activate～');
       this.activeWindow();
     });
 
     app.on('window-all-closed', async () => {
-      this.logger.info('窗口关闭事件 window-all-closed～', process.platform);
-      await this.closeWindow();
+      this.logger.info('主窗口关闭事件 window-all-closed～', process.platform);
       // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
       if (process.platform !== 'darwin') {
         app.quit();
@@ -74,23 +103,28 @@ class CloudUploader {
     });
   }
 
-  async closeWindow() {
-    return new Promise((resolve) => {
-      if (this.listen) {
-        this.listen.setListening(false);
-      }
-
-      // this.loginWindow = null;
-      // this.uploaderWindow = null;
-      resolve();
-    });
-  }
-
   async activeWindow() {
-    if (!(await LoginWindow.checkLogin())) {
-      this.activeLoginWindow();
-    } else {
-      this.activeUploaderWindow();
+    try {
+      this.logger.info(
+        `主窗口激活，是否登录: ${await LoginWindow.checkLogin()}`
+      );
+      if (!(await LoginWindow.checkLogin())) {
+        this.activeLoginWindow();
+      } else {
+        this.activeUploaderWindow();
+      }
+    } catch (error) {
+      this.logger.error('窗口激活报错', error);
+      if (error && error.status === 502) {
+        // Error: tunneling socket could not be established, cause=Parse Error: Expected HTTP/
+        Tools.dialog(this.window, {
+          detail: '网络不可用，请检查网络或者代理是否可用',
+        });
+        return;
+      }
+      Tools.dialog(this.window, {
+        detail: '窗口激活报错',
+      });
     }
   }
 
@@ -105,21 +139,9 @@ class CloudUploader {
       this.loginWindow = new LoginWindow();
     }
 
-    this.loginWindow.loginWindow.on('closed', async () => {
-      this.logger.info('登录窗口关闭事件 closed～', process.platform);
-      this.loginWindow = null;
-      // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
-    });
-
     if (this.uploaderWindow) {
       this.uploaderWindow.hide();
     }
-
-    setTimeout(() => {
-      if (this.loginWindow) {
-        this.loginWindow.sendLoginType();
-      }
-    }, 1500);
   }
 
   activeUploaderWindow() {
@@ -129,25 +151,13 @@ class CloudUploader {
       this.uploaderWindow = new UploaderWindow();
     }
 
-    this.uploaderWindow.uploaderWindow.on('closed', async () => {
-      this.logger.info('上传窗口关闭事件 closed～', process.platform);
-      this.uploaderWindow = null;
-      // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
-    });
-
-    // 首次直接发前端可能初始化问题，导致收不到消息，后边再研究下
-    setTimeout(() => {
-      if (this.uploaderWindow) {
-        this.uploaderWindow.sendConfig();
-      }
-
-      this.signIn.asyncState();
-      this.listen.asyncState();
-    }, 1500);
-
     if (this.loginWindow) {
       this.loginWindow.hide();
     }
+
+    setTimeout(() => {
+      this.uploaderWindow.sendMsg('async-state');
+    }, 1000);
   }
 }
 

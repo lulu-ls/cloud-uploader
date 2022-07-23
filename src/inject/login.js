@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const Logger = require('../common/logger');
 const Const = require('../common/const');
+const Config = require('../common/config');
 
 class LoginPreload {
   constructor() {
@@ -19,6 +20,7 @@ class LoginPreload {
   windowLoaded() {
     window.addEventListener('DOMContentLoaded', () => {
       this.initIPCOn();
+      this.initType();
     });
   }
 
@@ -26,8 +28,10 @@ class LoginPreload {
     // All of the Node.js APIs are available in the preload process.
     // It has the same sandbox as a Chrome extension.
     contextBridge.exposeInMainWorld('electronAPI', {
-      changeLoginType: (data) => ipcRenderer.send('login-type-change', data),
       loginByAccount: (data) => ipcRenderer.send('login-by-account', data),
+      initType: () => {
+        this.initType();
+      },
     });
   }
 
@@ -45,35 +49,39 @@ class LoginPreload {
       const foot = document.querySelector('#foot');
       foot.innerHTML = data;
     });
+  }
 
-    // 接收到登录状态
-    ipcRenderer.on('login-type', (event, type) => {
-      this.logger.log('收到登录类型请求', type);
+  initType() {
+    const type = Number(localStorage.getItem('loginType')) || 0;
 
-      const eleQr = document.querySelector(`#login-by-qr`);
-      const elePhone = document.querySelector(`#login-by-phone`);
-      const eleEmail = document.querySelector(`#login-by-email`);
+    this.logger.log('登录类型', type);
 
-      switch (type) {
-        case Const.LOGIN_ACCOUNT_TYPE_CODE:
-          eleQr.style.display = 'block';
-          elePhone.style.display = 'none';
-          eleEmail.style.display = 'none';
-          break;
-        case Const.LOGIN_ACCOUNT_TYPE_PHONE:
-          eleQr.style.display = 'none';
-          elePhone.style.display = 'block';
-          eleEmail.style.display = 'none';
-          break;
-        case Const.LOGIN_ACCOUNT_TYPE_EMAIL:
-          eleQr.style.display = 'none';
-          elePhone.style.display = 'none';
-          eleEmail.style.display = 'block';
-          break;
-        default:
-          this.logger.error('登录类型未知，设置失败');
-      }
-    });
+    const eleQr = document.querySelector(`#login-by-qr`);
+    const elePhone = document.querySelector(`#login-by-phone`);
+    const eleEmail = document.querySelector(`#login-by-email`);
+
+    switch (type) {
+      case Const.LOGIN_ACCOUNT_TYPE_CODE:
+        eleQr.style.display = 'block';
+        elePhone.style.display = 'none';
+        eleEmail.style.display = 'none';
+        ipcRenderer.send('login-by-account', {
+          type: Const.LOGIN_ACCOUNT_TYPE_CODE,
+        });
+        break;
+      case Const.LOGIN_ACCOUNT_TYPE_PHONE:
+        eleQr.style.display = 'none';
+        elePhone.style.display = 'block';
+        eleEmail.style.display = 'none';
+        break;
+      case Const.LOGIN_ACCOUNT_TYPE_EMAIL:
+        eleQr.style.display = 'none';
+        elePhone.style.display = 'none';
+        eleEmail.style.display = 'block';
+        break;
+      default:
+        this.logger.error('登录类型未知，设置失败');
+    }
   }
 }
 

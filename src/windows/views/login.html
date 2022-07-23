@@ -134,14 +134,16 @@
       eleLoginPhone.onclick = eleLoginPhoneClick;
 
       function eleLoginPhoneClick() {
-        window.electronAPI.changeLoginType(LOGIN_ACCOUNT_TYPE_PHONE);
+        localStorage.setItem('loginType', LOGIN_ACCOUNT_TYPE_PHONE);
+        window.electronAPI.initType();
       }
 
       const eleLoginEmail = document.querySelector('#login-email');
       eleLoginEmail.onclick = eleLoginEmailClick;
 
       function eleLoginEmailClick() {
-        window.electronAPI.changeLoginType(LOGIN_ACCOUNT_TYPE_EMAIL);
+        localStorage.setItem('loginType', LOGIN_ACCOUNT_TYPE_EMAIL);
+        window.electronAPI.initType();
       }
 
       const eleLoginQr1 = document.querySelector('#login-qr-1');
@@ -150,7 +152,8 @@
       eleLoginQr2.onclick = eleLoginQrClick;
 
       function eleLoginQrClick() {
-        window.electronAPI.changeLoginType(LOGIN_ACCOUNT_TYPE_CODE);
+        localStorage.setItem('loginType', LOGIN_ACCOUNT_TYPE_CODE);
+        window.electronAPI.initType();
       }
 
       const eleLoginByPhoneBtn = document.querySelector('#login-by-phone-btn');
@@ -163,6 +166,7 @@
         window.electronAPI.loginByAccount({
           account: account.value,
           password: password.value,
+          type: LOGIN_ACCOUNT_TYPE_PHONE,
         });
       }
 
@@ -176,6 +180,7 @@
         window.electronAPI.loginByAccount({
           account: account.value,
           password: password.value,
+          type: LOGIN_ACCOUNT_TYPE_EMAIL,
         });
       }
     </script>

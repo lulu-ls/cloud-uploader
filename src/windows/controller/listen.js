@@ -17,83 +17,65 @@ class Listen {
     this.init();
   }
 
-  async init() {
+  init() {
     this.logger = new Logger('Listen');
-
-    this.setListening(false);
-    this.onSetAutoListenTopic();
   }
 
   // 自动刷歌
   async asyncState() {
-    if (!this.getAutoListen()) {
-      this.logger.info('自动刷歌未开启');
-      return;
-    }
-
     let listenCount = 0;
-    if (!this.check()) {
-      if (this.getListening()) {
-        this.logger.info('自动刷歌进行中');
-        setTimeout(() => {
-          this.setListening(false);
-        }, 1000 * 60);
-        return;
-      }
-      this.setListening(true);
-      let isErr = false;
-      try {
-        const playList = await this.playList();
-        this.logger.info(`本次刷歌歌单列表：${playList}`);
 
-        topLoop: for (let i = 0; i < playList.length; i++) {
-          this.logger.info(
-            `-------------------当前歌单: < ${playList[i].name} > -------------------`
-          );
+    let isErr = false;
+    try {
+      const playList = await this.playList();
+      this.logger.info(`本次刷歌歌单列表：${playList}`);
 
-          const list = await this.playListDetail(playList[i].id);
+      topLoop: for (let i = 0; i < playList.length; i++) {
+        this.logger.info(
+          `-------------------当前歌单: < ${playList[i].name} > -------------------`
+        );
 
-          for (let k = 0; k < list.length; k++) {
-            // 如果已达刷歌上线，则退出循环
-            if (
-              Const.LISTEN_MAX_COUNT != -1 &&
-              listenCount > Const.LISTEN_MAX_COUNT
-            ) {
-              break topLoop;
-            }
+        const list = await this.playListDetail(playList[i].id);
 
-            // todo 听歌
-            await Tools.sleep(Const.LISTEN_SLEEP_TIME);
-            try {
-              await this.feedback(list[k]);
-              listenCount++;
-            } catch (error) {
-              this.logger.error('当前歌曲：', list[i]);
-              this.logger.error('错误：', error);
-              this.logger.info(
-                `听歌失败，当前歌单：${playList[i].name},休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`
-              );
-              await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
-            }
+        for (let k = 0; k < list.length; k++) {
+          // 如果已达刷歌上线，则退出循环
+          if (
+            Const.LISTEN_MAX_COUNT != -1 &&
+            listenCount > Const.LISTEN_MAX_COUNT
+          ) {
+            break topLoop;
+          }
+
+          // todo 听歌
+          await Tools.sleep(Const.LISTEN_SLEEP_TIME);
+          try {
+            await this.feedback(list[k]);
+            listenCount++;
+          } catch (error) {
+            this.logger.error('当前歌曲：', list[i]);
+            this.logger.error('错误：', error);
+            this.logger.info(
+              `听歌失败，当前歌单：${playList[i].name},休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`
+            );
+            await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
           }
         }
-      } catch (error) {
-        isErr = true;
-        this.logger.info(
-          `刷歌报错，err：${error}，休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`
-        );
-        await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
-      } finally {
-        this.setListening(false);
       }
+    } catch (error) {
+      isErr = true;
 
-      if (!isErr) {
-        this.setListenedDate();
-        this.logger.info(`今日刷歌完成，共计 ${listenCount - 1} 首 ~ ~`);
-      } else {
-        this.asyncState();
-        return;
-      }
+      this.logger.error(
+        `刷歌报错，err：${error}，休息 ${Const.LISTEN_ERROR_SLEEP_TIME} 毫秒 ^-^`,
+        error
+      );
+      await Tools.sleep(Const.LISTEN_ERROR_SLEEP_TIME);
+    }
+
+    if (!isErr) {
+      this.logger.info(`今日刷歌完成，共计 ${listenCount - 1} 首 ~ ~`);
+    } else {
+      this.asyncState();
+      return;
     }
 
     this.listenedEvent();
@@ -107,27 +89,12 @@ class Listen {
 
         const res = await recommend_resource({
           cookie,
+          proxy: Const.PROXY_ADDRESS,
         });
 
-        // { status: 200, body: { point: 5, code: 200 }, cookie: [] }
         this.logger.info(res);
 
         if (res && res.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
-          // {
-          //   status: 200,
-          //   body: {
-          //     code: 200,
-          //     featureFirst: true,
-          //     haveRcmdSongs: false,
-          //     recommend: [
-          //       [Object], [Object],
-          //       [Object], [Object],
-          //       [Object], [Object],
-          //       [Object], [Object]
-          //     ]
-          //   },
-          //   cookie: []
-          // }
           this.logger.info(
             `获取每日推荐歌单成功，共计 ${res.body.recommend.length} 个`
           );
@@ -151,38 +118,9 @@ class Listen {
     return new Promise(async (resolve, reject) => {
       const res = await playlist_track_all({
         id,
+        proxy: Const.PROXY_ADDRESS,
       });
-      // {
-      //   status: 200,
-      //   body: {
-      //     songs: [
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object]
-      //     ],
-      //     privileges: [
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object], [Object],
-      //       [Object], [Object], [Object]
-      //     ],
-      //     code: 200
-      //   },
-      //   cookie: [
-      //     'NMTID=Max-Age=315360000; Expires=Wed, 19 May 2032 00:56:57 GMT; Path=/;'
-      //   ]
-      // }
+
       this.logger.info(res);
 
       if (res && res.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
@@ -232,6 +170,8 @@ class Listen {
           sourceid: song.sourceId,
           time: song.dt,
           t: new Date().getTime(),
+
+          proxy: Const.PROXY_ADDRESS,
         });
 
         this.logger.info(res);
@@ -312,77 +252,20 @@ class Listen {
   // }
 
   // 检查是否已刷歌
-  check() {
-    const currSignedDate = this.getListenedDate();
-    const now = new Date().toISOString().split('T').shift();
-    this.logger.info(
-      `上次刷歌时间：${currSignedDate}, 当前日期：${now}, 是否已刷歌：${
-        currSignedDate === now
-      }`
-    );
+  // check() {
+  //   const currSignedDate = this.getListenedDate();
+  //   const now = new Date().toISOString().split('T').shift();
+  //   this.logger.info(
+  //     `上次刷歌时间：${currSignedDate}, 当前日期：${now}, 是否已刷歌：${
+  //       currSignedDate === now
+  //     }`
+  //   );
 
-    return now === currSignedDate;
-  }
+  //   return now === currSignedDate;
+  // }
 
-  setListening(flag = true) {
-    Store.set('listening', flag);
-  }
-
-  getListening() {
-    return !!Store.get('listening');
-  }
-
-  // 设置已听歌
-  setListenedDate() {
-    // 记录当前日期
-    this.logger.info(
-      `记录听歌日期成功, ${new Date().toISOString().split('T').shift()}`
-    );
-    Store.set('listenedDate', new Date().toISOString().split('T').shift());
-  }
-
-  // 获取已听歌日期
-  getListenedDate() {
-    return Store.get('listenedDate');
-  }
-
-  // 获取自动听歌
-  getAutoListen() {
-    return Store.get('autoListen');
-  }
-
-  // 设置自动听歌状态
-  setAutoListen(flag) {
-    if (!flag) {
-      flag = false;
-    } else {
-      flag = true;
-    }
-
-    this.logger.info(`设置自动听歌成功，值：${flag}`);
-    Store.set('autoListen', flag);
-    // 开始同步状态
-    if (flag) {
-      this.asyncState();
-    }
-  }
-  //接收自动签到topic
-  onSetAutoSignInTopic() {
-    PageEvent.on(Const.SIGN_IN_SET_AUTO_EVENT_TOPIC, (flag) => {
-      this.setAutoSignIn(flag);
-    });
-  }
-
-  // 获取登录 cookie
   getCookie() {
     return Store.get('cookie');
-  }
-
-  //接收自动刷歌 topic
-  onSetAutoListenTopic() {
-    PageEvent.on(Const.LISTEN_SET_AUTO_EVENT_TOPIC, (flag) => {
-      this.setAutoListen(flag);
-    });
   }
 
   // listen in event

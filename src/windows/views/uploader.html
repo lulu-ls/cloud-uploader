@@ -134,13 +134,17 @@
       function autoListenChange() {
         // console.log('listen', this.checked);
         if (this.checked) {
+          window.electronAPI.listen();
+
+          localStorage.setItem('autoListen', 1);
+
           autoListenBox.checked = true;
           autoListenText.innerHTML = '正在刷歌';
           autoListenLoading.style.display = 'block';
           autoListenFinished.style.display = 'none';
+        } else {
+          localStorage.setItem('autoListen', 0);
         }
-
-        window.electronAPI.setAutoListen(this.checked);
       }
 
       // // 自动签到
@@ -150,12 +154,17 @@
       function autoSignInChange() {
         // console.log('sign', this.checked);
         if (this.checked) {
+          window.electronAPI.signIn();
+
+          localStorage.setItem('autoSignIn', 1);
+
           autoSignInBox.checked = true;
           autoSignInText.innerHTML = '同步中···';
           autoSignInLoading.style.display = 'block';
           autoSignInSuccess.style.display = 'none';
+        } else {
+          localStorage.setItem('autoSignIn', 0);
         }
-        window.electronAPI.setAutoSignIn(this.checked);
       }
 
       // 退出登录
@@ -163,6 +172,7 @@
       logoutEle.onclick = logout;
 
       function logout() {
+        localStorage.clear();
         window.electronAPI.logout();
       }
 

@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const Logger = require('../common/logger');
+const Const = require('../common/const');
 
 class UploadPreload {
   constructor() {
@@ -31,8 +32,8 @@ class UploadPreload {
       fileSelect: () => ipcRenderer.send('file-select'),
       dragSelect: (list) => ipcRenderer.send('drag-select', list),
 
-      setAutoSignIn: (flag) => ipcRenderer.send('auto-sign-in-set', flag),
-      setAutoListen: (flag) => ipcRenderer.send('auto-listen-set', flag),
+      signIn: (flag) => ipcRenderer.send('auto-sign', flag),
+      listen: (flag) => ipcRenderer.send('auto-listen', flag),
     });
   }
 
@@ -50,25 +51,33 @@ class UploadPreload {
     });
 
     // 配置信息
-    ipcRenderer.on('config-info', (event, data) => {
-      this.logger.log(`收到配置信息，${data}`);
-      this.config(data);
+    ipcRenderer.on('async-state', (event, data) => {
+      this.logger.log(`同步配置信息，${data}`);
+      this.asyncState(data);
     });
 
     // 更新签到成功状态
-    ipcRenderer.on('sign-in-success', (event) => {
+    ipcRenderer.on('finished', (event, type) => {
+      this.finished(type);
+    });
+  }
+
+  finished(type) {
+    if (type === Const.SIGN_IN_FINISHED_TYPE) {
       this.logger.log('接收到签到成功消息');
       const autoSignInText = document.querySelector('#autoSignInText');
       const autoSignInLoading = document.querySelector('#autoSignInLoading');
       const autoSignInSuccess = document.querySelector('#autoSignInSuccess');
 
+      console.log(autoSignInText);
       autoSignInText.innerHTML = '已签到';
+      console.log(autoSignInText.innerHTML);
       autoSignInLoading.style.display = 'none';
       autoSignInSuccess.style.display = 'block';
-    });
 
-    // 更新刷歌成功状态
-    ipcRenderer.on('listen-finished', (event) => {
+      localStorage.setItem(`sign-in-${this.getDate()}`, 1);
+    } else if (type === Const.LISTEN_FINISHED_TYPE) {
+      // 更新刷歌成功状态
       this.logger.log('接收到刷歌成功消息');
 
       const autoListenLoading = document.querySelector('#autoListenLoading');
@@ -78,10 +87,14 @@ class UploadPreload {
       autoListenText.innerHTML = '刷歌完成';
       autoListenLoading.style.display = 'none';
       autoListenFinished.style.display = 'block';
-    });
+
+      localStorage.setItem(`listen-${this.getDate()}`, 1);
+    } else {
+      this.logger.error('未知通知类型');
+    }
   }
 
-  config(config = {}) {
+  asyncState(config = {}) {
     // autoSignIn;
     const autoSignInBox = document.querySelector('#autoSignInBox');
     const autoSignInLoading = document.querySelector('#autoSignInLoading');
@@ -94,22 +107,36 @@ class UploadPreload {
     const autoListenFinished = document.querySelector('#autoListenFinished');
     const autoListenText = document.querySelector('#autoListenText');
 
-    const { autoListen, autoSignIn } = config;
+    const autoListen = localStorage.getItem('autoListen');
+    const autoSignIn = localStorage.getItem('autoSignIn');
 
     if (autoSignIn) {
       autoSignInBox.checked = true;
-      autoSignInText.innerHTML = '同步中···';
-      autoSignInLoading.style.display = 'block';
-      autoSignInSuccess.style.display = 'none';
+      if (!localStorage.getItem(`sign-in-${this.getDate()}`)) {
+        ipcRenderer.send('auto-sign');
+
+        autoSignInText.innerHTML = '同步中···';
+        autoSignInLoading.style.display = 'block';
+        autoSignInSuccess.style.display = 'none';
+      } else {
+        this.finished(Const.SIGN_IN_FINISHED_TYPE);
+      }
     } else {
       autoSignInBox.checked = false;
     }
 
     if (autoListen) {
       autoListenBox.checked = true;
-      autoListenText.innerHTML = '正在刷歌';
-      autoListenLoading.style.display = 'block';
-      autoListenFinished.style.display = 'none';
+
+      if (!localStorage.getItem(`listen-${this.getDate()}`)) {
+        ipcRenderer.send('auto-listen');
+
+        autoListenText.innerHTML = '正在刷歌';
+        autoListenLoading.style.display = 'block';
+        autoListenFinished.style.display = 'none';
+      } else {
+        this.finished(Const.LISTEN_FINISHED_TYPE);
+      }
     } else {
       autoListenBox.checked = false;
     }
@@ -150,6 +177,10 @@ class UploadPreload {
                   <div id="${item.path}" class="loading"></div>
                 </div>
             </li>`;
+  }
+
+  getDate() {
+    return new Date().toISOString().split('T').shift();
   }
 }
 

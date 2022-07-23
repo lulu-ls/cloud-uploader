@@ -23,11 +23,12 @@ class Config {
 
   // 获取登录类型
   static getLoginType() {
-    const res = Store.get('loginType');
-    if (!res) {
-      return Const.LOGIN_ACCOUNT_TYPE_CODE;
-    }
-    return res;
+    return Store.get('loginType');
+  }
+
+  // 获取登录类型
+  static setLoginType() {
+    return Store.get('loginType');
   }
 }
 
