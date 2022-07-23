@@ -43,7 +43,6 @@ class SignIn {
         // 签到成功
         // signInRes.body.point 所获积分数量
         this.logger.info(`签到成功，获得积分：${signInRes.body.point}`);
-        this.setSigned();
         resolve('签到成功');
       } else {
         this.logger.error('签到失败');

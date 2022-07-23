@@ -11,6 +11,7 @@ class LoginWindow extends BaseWindow {
     super();
     this.name = 'LoginWindow';
     this.config = Const.LOGIN_WINDOW;
+    this.updateVersion = 0;
 
     this.init();
   }
@@ -23,7 +24,7 @@ class LoginWindow extends BaseWindow {
       const qrInfo = await this.createQrCode(key);
 
       this.sendMsg('update-qr-code', qrInfo.qrimg);
-      this.updateQrCodeState(key);
+      this.updateQrCodeState(key, ++this.updateVersion);
     } catch (error) {
       this.logger.error(error);
     }
@@ -34,7 +35,7 @@ class LoginWindow extends BaseWindow {
       const cookie = this.session.cookies;
 
       // 获取 key
-      const keyRes = await login_qr_key({
+      const keyRes = await Api.login_qr_key({
         cookie,
         proxy: Const.PROXY_ADDRESS,
       });
@@ -80,8 +81,15 @@ class LoginWindow extends BaseWindow {
   }
 
   // 查看并更新扫码状态
-  async updateQrCodeState(key) {
+  async updateQrCodeState(key, ver) {
     // 800 为二维码过期,801 为等待扫码,802 为待确认,803 为授权登录成功(803 状态码下会返回 cookies)
+
+    if (ver < this.updateVersion) {
+      this.logger.info(
+        `二维码版本过期，终止刷新,ver: ${ver},updateVersion: ${this.updateVersion}`
+      );
+      return;
+    }
 
     const stateRes = await Api.login_qr_check({
       key,
@@ -114,7 +122,7 @@ class LoginWindow extends BaseWindow {
     }
 
     setTimeout(() => {
-      this.updateQrCodeState(key);
+      this.updateQrCodeState(key, ver);
     }, 3000);
   }
 
@@ -122,6 +130,12 @@ class LoginWindow extends BaseWindow {
   async accountLogin(accountInfo = {}) {
     const { type, account, password } = accountInfo;
     // this.logger.info(`调用账号密码登录，类型：${type}，账户：${account}`);
+    if (type === Const.LOGIN_ACCOUNT_TYPE_CODE) {
+      this.generateQrCode();
+      return;
+    }
+
+    this.updateVersion++;
 
     const md5Password = Tools.md5(password);
 
@@ -202,6 +216,7 @@ class LoginWindow extends BaseWindow {
 
   // login event
   loginedEvent() {
+    this.updateVersion++;
     PageEvent.emit(Const.LOGIN_SUCCESS_EVENT_TOPIC);
   }
 }

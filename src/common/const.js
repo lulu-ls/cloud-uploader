@@ -4,7 +4,7 @@ const path = require('path');
 // 常量定义
 module.exports = {
   // 公共变量
-  COMMON_DEBUG: true, // 是否为调试模式
+  COMMON_DEBUG: false, // 是否为调试模式
 
   // 登录窗口
   LOGIN_WINDOW: {
@@ -48,7 +48,7 @@ module.exports = {
   SIGN_IN_START_EVENT_TOPIC: 'sign-in-start',
 
   // 自动刷歌 300，最好设置大于 300 或者 -1 留一点冗余，因为可能有已听过的，导致刷不够 300
-  LISTEN_MAX_COUNT: 500, //每日最多听歌数量，如果小于 300 会默认 300首，大于则取设置的值，-1 会听完首页每日推荐歌单所有歌曲
+  LISTEN_MAX_COUNT: 350, //每日最多听歌数量，-1 会听完首页每日推荐歌单所有歌曲
   LISTEN_SLEEP_TIME: 100, // 默认 100 毫秒
   LISTEN_ERROR_SLEEP_TIME: 5000, // 刷歌出现接口错误（一般为请求频繁），休息时间
   LISTEN_FINISHED_EVENT_TOPIC: 'listen-finished', // 刷歌完成通知
@@ -61,6 +61,6 @@ module.exports = {
   CLOUD_MUSIC_SCAN_WAIT_STATUS: 801,
   CLOUD_MUSIC_SCAN_FINISHED_STATUS: 803,
 
-  // PROXY_ADDRESS: 'http://135.251.187.33:8080',
-  PROXY_ADDRESS: 'http://127.0.0.1:7890',
+  // 代理地址
+  PROXY_ADDRESS: '', // 例：http://127.0.0.1:7891
 };

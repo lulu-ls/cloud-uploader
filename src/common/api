@@ -1,5 +1,6 @@
 const Logger = require('./logger');
 const Store = require('./store');
+const Const = require('./const');
 
 const {
   login_qr_key,
@@ -23,7 +24,7 @@ class Api {
   init() {
     this.logger = new Logger('UploaderWindow');
 
-    this.proxy = this.getProxy();
+    this.proxy = this.getProxy() || Const.PROXY_ADDRESS;
   }
 
   // 待优化

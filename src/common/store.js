@@ -11,45 +11,8 @@ const schema = {
     type: 'string',
     default: '',
   },
-
-  // isLogin: {
-  //   // 是否已登录
-  //   type: 'boolean',
-  //   default: false,
-  // },
-
-  // signedDate: {
-  //   // 签到日期
-  //   type: 'string',
-  //   default: '',
-  // },
-  // autoSignIn: {
-  //   // 自动签到是否开启
-  //   type: 'boolean',
-  //   default: false,
-  // },
-  // listenedDate: {
-  //   // 刷歌日期
-  //   type: 'string',
-  //   default: '',
-  // },
-  // listening: {
-  //   // 自动刷歌是否进行中
-  //   type: 'boolean',
-  //   default: false,
-  // },
-  // autoListen: {
-  //   // 自动刷歌是否开启
-  //   type: 'boolean',
-  //   default: false,
-  // },
-  // loginType: {
-  //   // 登录类型
-  //   type: 'number',
-  //   default: 0,
-  // },
 };
 
-const store = new Store(schema);
+const store = new Store({ schema });
 
 module.exports = store;

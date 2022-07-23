@@ -20,6 +20,16 @@ class Config {
   static getAutoSignIn() {
     return Store.get('autoSignIn');
   }
+
+  // 获取登录类型
+  static getLoginType() {
+    return Store.get('loginType');
+  }
+
+  // 获取登录类型
+  static setLoginType() {
+    return Store.get('loginType');
+  }
 }
 
 module.exports = Config;

@@ -49,12 +49,7 @@ class UploaderWindow extends BaseWindow {
 
   // 发送刷歌成功消息到前端
   sendListenFinished() {
-    this.sendMsg('finished', Const.SIGN_IN_FINISHED_TYPE);
-    try {
-      this.uploaderWindow.webContents.send('listen-finished', !!data);
-    } catch (error) {
-      Logger.def(error);
-    }
+    this.sendMsg('finished', Const.LISTEN_FINISHED_TYPE);
   }
 
   // 获取可上传列表
@@ -69,7 +64,7 @@ class UploaderWindow extends BaseWindow {
       const res = await this.folderFiles(fileList);
 
       if (res.length <= 0) {
-        Tools.dialog(this.uploaderWindow, {
+        Tools.dialog(this.window, {
           detail: '没有可上传文件',
         });
         resolve([]);
@@ -151,14 +146,14 @@ class UploaderWindow extends BaseWindow {
       });
 
       if (res.canceled) {
-        Tools.dialog(this.uploaderWindow, { detail: '您还没有选择任何文件' });
-        this.logger.log(this.uploaderWindow, { detail: '未选择任何文件' });
+        Tools.dialog(this.window, { detail: '您还没有选择任何文件' });
+        this.logger.log(this.window, { detail: '未选择任何文件' });
         return;
       }
       this.startUpload(res.filePaths);
     } catch (error) {
       this.logger.error(error);
-      Tools.dialog(this.uploaderWindow, { detail: '选择文件报错' });
+      Tools.dialog(this.window, { detail: '选择文件报错' });
       return;
     }
   }

@@ -6,6 +6,7 @@ const SignIn = require('./windows/controller/signIn');
 
 const Logger = require('./common/logger');
 const Const = require('./common/const');
+const Tools = require('./common/tools');
 const { PageEvent } = require('./common/event');
 const Listen = require('./windows/controller/listen');
 
@@ -103,11 +104,27 @@ class CloudUploader {
   }
 
   async activeWindow() {
-    this.logger.info(`主窗口激活，是否登录: ${await LoginWindow.checkLogin()}`);
-    if (!(await LoginWindow.checkLogin())) {
-      this.activeLoginWindow();
-    } else {
-      this.activeUploaderWindow();
+    try {
+      this.logger.info(
+        `主窗口激活，是否登录: ${await LoginWindow.checkLogin()}`
+      );
+      if (!(await LoginWindow.checkLogin())) {
+        this.activeLoginWindow();
+      } else {
+        this.activeUploaderWindow();
+      }
+    } catch (error) {
+      this.logger.error('窗口激活报错', error);
+      if (error && error.status === 502) {
+        // Error: tunneling socket could not be established, cause=Parse Error: Expected HTTP/
+        Tools.dialog(this.window, {
+          detail: '网络不可用，请检查网络或者代理是否可用',
+        });
+        return;
+      }
+      Tools.dialog(this.window, {
+        detail: '窗口激活报错',
+      });
     }
   }
 
@@ -137,6 +154,10 @@ class CloudUploader {
     if (this.loginWindow) {
       this.loginWindow.hide();
     }
+
+    setTimeout(() => {
+      this.uploaderWindow.sendMsg('async-state');
+    }, 1000);
   }
 }
 
