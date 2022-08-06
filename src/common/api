@@ -2,21 +2,13 @@ const Logger = require('./logger');
 const Store = require('./store');
 const Const = require('./const');
 
-const {
-  login_qr_key,
-  login_qr_create,
-  login_qr_check,
-  login_status,
-
-  login_cellphone,
-  login,
-  cloud,
-} = require('NeteaseCloudMusicApi');
+const CloudApi = require('NeteaseCloudMusicApi');
 
 class Api {
   constructor() {
     this.logger = null;
     this.proxy = undefined;
+    this.cookie = '';
 
     this.init();
   }
@@ -25,42 +17,27 @@ class Api {
     this.logger = new Logger('UploaderWindow');
 
     this.proxy = this.getProxy() || Const.PROXY_ADDRESS;
+    this.cookie = this.getCookie();
   }
 
   // 待优化
-  login_qr_key(option = {}) {
+  request(name = '', option = {}) {
+    if (name === '') {
+      return;
+    }
     option.proxy = this.proxy;
-    return login_qr_key(option);
+    option.cookie = this.cookie;
+
+    if (!CloudApi[name]) {
+      this.logger.error('api 不存在，请检查方法名称');
+      return;
+    }
+
+    return CloudApi[name](option);
   }
 
-  login_qr_create(option = {}) {
-    option.proxy = this.proxy;
-    return login_qr_create(option);
-  }
-
-  login_qr_check(option = {}) {
-    option.proxy = this.proxy;
-    return login_qr_check(option);
-  }
-
-  login_status(option = {}) {
-    option.proxy = this.proxy;
-    return login_status(option);
-  }
-
-  login_cellphone(option = {}) {
-    option.proxy = this.proxy;
-    return login_cellphone(option);
-  }
-
-  login(option = {}) {
-    option.proxy = this.proxy;
-    return login(option);
-  }
-
-  cloud(option = {}) {
-    option.proxy = this.proxy;
-    return cloud(option);
+  getCookie() {
+    return Store.get('cookie');
   }
 
   getProxy() {

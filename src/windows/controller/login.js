@@ -35,10 +35,7 @@ class LoginWindow extends BaseWindow {
       const cookie = this.session.cookies;
 
       // 获取 key
-      const keyRes = await Api.login_qr_key({
-        cookie,
-        proxy: Const.PROXY_ADDRESS,
-      });
+      const keyRes = await Api.request('login_qr_key');
 
       this.logger.info(keyRes);
 
@@ -59,7 +56,7 @@ class LoginWindow extends BaseWindow {
 
   async createQrCode(key) {
     return new Promise(async (resolve, reject) => {
-      const createRes = await Api.login_qr_create({
+      const createRes = await Api.request('login_qr_create', {
         key,
         qrimg: true,
       });
@@ -91,9 +88,8 @@ class LoginWindow extends BaseWindow {
       return;
     }
 
-    const stateRes = await Api.login_qr_check({
+    const stateRes = await Api.request('login_qr_check', {
       key,
-      proxy: Const.PROXY_ADDRESS,
     });
 
     this.logger.info(stateRes);
@@ -141,11 +137,9 @@ class LoginWindow extends BaseWindow {
 
     try {
       if (type === Const.LOGIN_ACCOUNT_TYPE_PHONE) {
-        const res = await Api.login_cellphone({
+        const res = await Api.request('login_cellphone', {
           phone: account,
           md5_password: md5Password,
-
-          proxy: Const.PROXY_ADDRESS,
         });
 
         this.logger.info(res);
@@ -161,10 +155,9 @@ class LoginWindow extends BaseWindow {
       }
 
       if (type === Const.LOGIN_ACCOUNT_TYPE_EMAIL) {
-        const res = await Api.login({
+        const res = await Api.request('login', {
           email: account,
           md5_password: md5Password,
-          proxy: Const.PROXY_ADDRESS,
         });
 
         this.logger.info(res);
@@ -196,7 +189,7 @@ class LoginWindow extends BaseWindow {
       return false;
     }
 
-    const res = await Api.login_status({ cookie });
+    const res = await Api.request('login_status');
 
     if (res && res.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
       return true;

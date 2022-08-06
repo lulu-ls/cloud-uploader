@@ -1,4 +1,4 @@
-const { app, ipcMain } = require('electron');
+const { app, ipcMain, Tray, globalShortcut } = require('electron');
 
 const LoginWindow = require('./windows/controller/login');
 const UploaderWindow = require('./windows/controller/uploader');
@@ -36,6 +36,7 @@ class CloudUploader {
   initApp() {
     app.on('ready', () => {
       this.activeWindow();
+      this.register();
 
       ipcMain.on('login-by-account', (event, data) => {
         this.logger.log('receive login-by-account event!', data);
@@ -92,10 +93,13 @@ class CloudUploader {
     app.on('activate', () => {
       this.logger.info('主窗口激活事件 activate～');
       this.activeWindow();
+      this.register();
     });
 
     app.on('window-all-closed', async () => {
       this.logger.info('主窗口关闭事件 window-all-closed～', process.platform);
+      this.unregister();
+
       // 处理 UnhandledPromiseRejectionWarning: TypeError: Object has been destroyed
       if (process.platform !== 'darwin') {
         app.quit();
@@ -125,6 +129,16 @@ class CloudUploader {
       Tools.dialog(this.window, {
         detail: '窗口激活报错',
       });
+    }
+  }
+
+  hideWindow() {
+    if (this.loginWindow) {
+      this.loginWindow.hide();
+    }
+
+    if (this.uploaderWindow) {
+      this.uploaderWindow.hide();
     }
   }
 
@@ -158,6 +172,23 @@ class CloudUploader {
     setTimeout(() => {
       this.uploaderWindow.sendMsg('async-state');
     }, 1000);
+  }
+
+  // 监测键盘事件
+  register() {
+    globalShortcut.register('CommandOrControl+Q', () => {
+      app.exit();
+    });
+
+    globalShortcut.register('CommandOrControl+H', () => {
+      this.unregister();
+      this.hideWindow();
+    });
+  }
+
+  // 取消监测
+  unregister() {
+    globalShortcut.unregisterAll();
   }
 }
 

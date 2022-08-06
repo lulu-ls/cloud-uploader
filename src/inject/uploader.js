@@ -1,7 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const fs = require('fs');
+const path = require('path');
+
 const Logger = require('../common/logger');
 const Const = require('../common/const');
-
 class UploadPreload {
   constructor() {
     this.logger = null;
@@ -20,6 +22,7 @@ class UploadPreload {
   windowLoaded() {
     window.addEventListener('DOMContentLoaded', () => {
       this.initIPCOn();
+      this.initVersion();
     });
   }
 
@@ -39,6 +42,21 @@ class UploadPreload {
         this.openDefaultBrowser(url);
       },
     });
+  }
+
+  initVersion() {
+    //
+    const ele = document.getElementById('github');
+    const packageJsonPath = path.join(
+      path.dirname(path.dirname(__dirname)),
+      'package.json'
+    );
+    const packageJsonData = JSON.parse(
+      fs.readFileSync(packageJsonPath, 'utf8')
+    );
+    const version = packageJsonData.version;
+
+    ele.innerText = `©2022 AlexLiu. ${version} Github`;
   }
 
   initIPCOn() {
@@ -73,9 +91,7 @@ class UploadPreload {
       const autoSignInLoading = document.querySelector('#autoSignInLoading');
       const autoSignInSuccess = document.querySelector('#autoSignInSuccess');
 
-      console.log(autoSignInText);
       autoSignInText.innerHTML = '已签到';
-      console.log(autoSignInText.innerHTML);
       autoSignInLoading.style.display = 'none';
       autoSignInSuccess.style.display = 'block';
 

@@ -1,4 +1,4 @@
-const { daily_signin } = require('NeteaseCloudMusicApi');
+const Api = require('../../common/api');
 
 const Const = require('../../common/const');
 const Logger = require('../../common/logger');
@@ -31,10 +31,7 @@ class SignIn {
     return new Promise(async (resolve, reject) => {
       const cookie = this.getCookie();
 
-      const signInRes = await daily_signin({
-        cookie,
-        proxy: Const.PROXY_ADDRESS,
-      });
+      const signInRes = await Api.request('daily_signin');
 
       // { status: 200, body: { point: 5, code: 200 }, cookie: [] }
       this.logger.info(signInRes);

@@ -1,9 +1,4 @@
-const {
-  recommend_resource,
-  playlist_track_all,
-  scrobble,
-} = require('NeteaseCloudMusicApi');
-
+const Api = require('../../common/api');
 const Const = require('../../common/const');
 const Logger = require('../../common/logger');
 const Store = require('../../common/store');
@@ -85,12 +80,7 @@ class Listen {
   async playList() {
     return new Promise(async (resolve, reject) => {
       try {
-        const cookie = this.getCookie();
-
-        const res = await recommend_resource({
-          cookie,
-          proxy: Const.PROXY_ADDRESS,
-        });
+        const res = await Api.request('recommend_resource');
 
         this.logger.info(res);
 
@@ -116,9 +106,8 @@ class Listen {
   // 歌单歌曲列表
   async playListDetail(id = 0) {
     return new Promise(async (resolve, reject) => {
-      const res = await playlist_track_all({
+      const res = await Api.playlist_track_all({
         id,
-        proxy: Const.PROXY_ADDRESS,
       });
 
       this.logger.info(res);
@@ -161,17 +150,11 @@ class Listen {
           return reject('缺少dt');
         }
 
-        const cookie = this.getCookie();
-
-        const res = await scrobble({
-          cookie,
-
+        const res = await Api.request('scrobble', {
           id: song.id,
           sourceid: song.sourceId,
           time: song.dt,
           t: new Date().getTime(),
-
-          proxy: Const.PROXY_ADDRESS,
         });
 
         this.logger.info(res);
@@ -263,10 +246,6 @@ class Listen {
 
   //   return now === currSignedDate;
   // }
-
-  getCookie() {
-    return Store.get('cookie');
-  }
 
   // listen in event
   listenedEvent() {

@@ -1,7 +1,7 @@
 const { Menu, MenuItem, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { cloud } = require('NeteaseCloudMusicApi');
+const Api = require('../../common/api');
 
 const Const = require('../../common/const');
 const Logger = require('../../common/logger');
@@ -158,10 +158,6 @@ class UploaderWindow extends BaseWindow {
     }
   }
 
-  getCookie() {
-    return Store.get('cookie');
-  }
-
   async startUpload(files = []) {
     const list = await this.check(files);
 
@@ -181,14 +177,29 @@ class UploaderWindow extends BaseWindow {
 
         await this.sleep();
 
-        const res = await cloud({
+        const res = await Api.request('cloud', {
           songFile: {
             name: element.name,
             data: fs.readFileSync(element.path),
           },
-          cookie: this.getCookie(),
-          proxy: Const.PROXY_ADDRESS,
         });
+
+        // 歌曲匹配纠错
+        // if (
+        //   res &&
+        //   res.body &&
+        //   res.body.privateCloud &&
+        //   res.body.privateCloud.songId
+        // ) {
+        //   const res1 = await Api.request('cloud_match', {
+        //     songFile: {
+        //       name: element.name,
+        //       data: fs.readFileSync(element.path),
+        //     },
+        //   });
+
+        //   console.log(res1);
+        // }
 
         if (res && res.status === Const.CLOUD_MUSIC_SUCCESS_STATUS) {
           successCount++;
