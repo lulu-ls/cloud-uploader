@@ -106,7 +106,7 @@ class Listen {
   // 歌单歌曲列表
   async playListDetail(id = 0) {
     return new Promise(async (resolve, reject) => {
-      const res = await Api.playlist_track_all({
+      const res = await Api.request('playlist_track_all', {
         id,
       });
 
