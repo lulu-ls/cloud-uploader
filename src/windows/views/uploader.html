@@ -139,6 +139,7 @@
       function autoListenChange() {
         // console.log('listen', this.checked);
         if (this.checked) {
+          console.log('发送刷歌消息')
           window.electronAPI.listen();
 
           localStorage.setItem('autoListen', 1);
@@ -159,6 +160,7 @@
       function autoSignInChange() {
         // console.log('sign', this.checked);
         if (this.checked) {
+          console.log('发送签到消息')
           window.electronAPI.signIn();
 
           localStorage.setItem('autoSignIn', 1);

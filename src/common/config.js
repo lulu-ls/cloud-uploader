@@ -1,5 +1,5 @@
 const Store = require('./store');
-const Const = require('./const');
+// const Const = require('./const');
 
 class Config {
   constructor() {}

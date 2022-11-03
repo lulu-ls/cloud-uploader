@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const Logger = require('../common/logger');
 const Const = require('../common/const');
-const Config = require('../common/config');
+// const Config = require('../common/config');
 
 class LoginPreload {
   constructor() {

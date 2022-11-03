@@ -4,14 +4,14 @@ const path = require('path');
 // 常量定义
 module.exports = {
   // 公共变量
-  COMMON_DEBUG: false, // 是否为调试模式
+  COMMON_DEBUG: true, // 是否为调试模式
 
   // 登录窗口
   LOGIN_WINDOW: {
     TITLE: '登录',
     SIZE_WIDTH: 350,
     SIZE_HEIGHT: 550,
-    RESIZE: false,
+    RESIZE: true,
     PRELOAD: path.join(__dirname, '../inject/login.js'),
     LOAD_FILE: path.join(__dirname, '../windows/views/login.html'),
   },

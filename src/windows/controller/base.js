@@ -9,6 +9,7 @@ class BaseWindow {
     this.name = '';
     this.logger = null;
     this.config = null;
+    this.isShow = false;
   }
 
   init() {
@@ -40,6 +41,9 @@ class BaseWindow {
 
       webPreferences: {
         preload: this.config.PRELOAD,
+        sandbox: false
+        // nodeIntegration: true,
+        // contextIsolation: false
       },
     });
 
@@ -59,13 +63,17 @@ class BaseWindow {
     this.window.on('close', (e) => {
       if (this.window.isVisible()) {
         e.preventDefault();
-        this.hide();
+       if(!this.isShow){
+         this.hide();
+       }
       }
     });
 
     this.window.on('show', (e) => {
       e.preventDefault();
-      this.show();
+      if(this.isShow){
+        this.show();
+      }
     });
   }
 
@@ -76,10 +84,12 @@ class BaseWindow {
   show() {
     this.window.show();
     this.window.focus();
+    this.isShow = true;
   }
 
   hide() {
     this.window.hide();
+    this.isShow = false;
   }
 }
 

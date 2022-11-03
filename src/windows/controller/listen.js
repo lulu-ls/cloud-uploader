@@ -35,7 +35,7 @@ class Listen {
         for (let k = 0; k < list.length; k++) {
           // 如果已达刷歌上线，则退出循环
           if (
-            Const.LISTEN_MAX_COUNT != -1 &&
+            Const.LISTEN_MAX_COUNT !== -1 &&
             listenCount > Const.LISTEN_MAX_COUNT
           ) {
             break topLoop;

@@ -6,8 +6,8 @@ const Api = require('../../common/api');
 const Const = require('../../common/const');
 const Logger = require('../../common/logger');
 const Tools = require('../../common/tools');
-const Store = require('../../common/store');
-const { PageEvent } = require('../../common/event');
+// const Store = require('../../common/store');
+// const { PageEvent } = require('../../common/event');
 const BaseWindow = require('./base');
 
 class UploaderWindow extends BaseWindow {
@@ -57,6 +57,7 @@ class UploaderWindow extends BaseWindow {
     return new Promise(async (resolve, reject) => {
       if (!Array.isArray(fileList)) {
         resolve([]);
+        this.sendMsg('upload-log', {msg:'上传失败，fileList无可用元素'});
         return;
       }
 
@@ -67,6 +68,7 @@ class UploaderWindow extends BaseWindow {
         Tools.dialog(this.window, {
           detail: '没有可上传文件',
         });
+        this.sendMsg('upload-log', {msg:'没有可上传文件'});
         resolve([]);
         return;
       }
@@ -114,6 +116,7 @@ class UploaderWindow extends BaseWindow {
       fs.readdir(dir, function (err, files) {
         if (err) {
           Logger.def('上传失败，读取文件夹失败：', dir, err);
+          this.sendMsg('upload-log', {msg:'上传失败，读取文件夹失败',error:err});
           resolve([]);
         }
 
@@ -128,6 +131,7 @@ class UploaderWindow extends BaseWindow {
       fs.stat(dir, function (err, stat) {
         if (err) {
           Logger.def('上传失败，判断是否是文件错误：', dir, err);
+          this.sendMsg('upload-log', {msg:'上传失败，判断是否是文件错误',error:err});
           resolve(false);
           return;
         }
@@ -153,6 +157,7 @@ class UploaderWindow extends BaseWindow {
       this.startUpload(res.filePaths);
     } catch (error) {
       this.logger.error(error);
+      this.sendMsg('upload-log', {msg:'选择文件报错',error});
       Tools.dialog(this.window, { detail: '选择文件报错' });
       return;
     }
@@ -207,9 +212,11 @@ class UploaderWindow extends BaseWindow {
           this.sendMsg('upload-item-success', element);
         } else {
           this.logger.error('上传失败, 元素为: ', element);
+          this.sendMsg('upload-log', {msg:'元素上传失败',error:element});
         }
       }
     } catch (error) {
+      this.sendMsg('upload-log', {msg:'上传失败',error});
       this.logger.error('上传失败, error: ', error);
     }
 
@@ -240,12 +247,13 @@ class UploaderWindow extends BaseWindow {
     }
 
     this.logger.info(`本次上传休息时间为 ${time} 毫秒`);
+    this.sendMsg('upload-log', {msg:`本次上传休息时间为 ${time} 毫秒`});
     return Tools.sleep(time);
   }
 
-  logoutTopic() {
-    PageEvent.emit(Const.LOGIN_LOGOUT_EVENT_TOPIC);
-  }
+  // logoutTopic() {
+  //   PageEvent.emit(Const.LOGIN_LOGOUT_EVENT_TOPIC);
+  // }
 }
 
 module.exports = UploaderWindow;

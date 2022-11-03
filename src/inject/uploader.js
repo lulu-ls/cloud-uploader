@@ -82,6 +82,10 @@ class UploadPreload {
     ipcRenderer.on('finished', (event, type) => {
       this.finished(type);
     });
+
+    ipcRenderer.on('upload-log', (event, data) => {
+      this.logger.log('接收到后端日志消息', data);
+    });
   }
 
   finished(type) {
@@ -170,10 +174,17 @@ class UploadPreload {
 
   updateItemSuccess(data = {}) {
     const li = document.getElementById(data.path);
-    if (li) {
-      li.classList.remove('loading');
-      li.classList.add('finish');
-    }
+    li.classList.remove('loading');
+    li.classList.add('finish');
+    // const lis = document.querySelectorAll(`#${data.path}`);
+    // if (lis && lis.length > 0) {
+    //   for (let i = 0; i < lis.length; i++) {
+    //     const li = lis[i]
+    //     li.classList.remove('loading');
+    //     li.classList.add('finish');
+    //   }
+    //
+    // }
   }
 
   // 更新上传列表
