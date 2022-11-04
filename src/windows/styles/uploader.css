@@ -1,241 +1,251 @@
 /* styles.css */
 * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 html,
 body {
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
 }
 
 .display-none {
-  display: none;
+    display: none;
 }
 
 .upload-image {
-  width: 50%;
-  max-width: 300px;
+    width: 50%;
+    max-width: 300px;
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .main {
-  display: flex;
-  flex: 1;
-  overflow: auto;
+    display: flex;
+    flex: 1;
+    overflow: auto;
 }
 
 .footer {
-  height: 24px;
-  line-height: 24px;
-  /* text-align: center; */
-  color: #bebebe;
-  background-color: #f0f0f0;
-  font-size: 12px;
-  display: flex;
+    height: 24px;
+    line-height: 24px;
+    /* text-align: center; */
+    color: #bebebe;
+    background-color: #f0f0f0;
+    font-size: 12px;
+    display: flex;
 }
 
 .upload-block {
-  text-align: center;
-  flex: 1;
+    text-align: center;
+    flex: 1;
 }
 
 .uploader-list-none-init {
-  display: none;
+    display: none;
 }
 
 .uploader-list-none {
-  animation: removeSlip 0.15s linear;
-  -webkit-animation: removeSlip 0.15s linear;
-  position: relative;
-  width: 0;
+    animation: removeSlip 0.15s linear;
+    -webkit-animation: removeSlip 0.15s linear;
+    position: relative;
+    width: 0;
 }
+
 .uploader-list {
-  display: block;
-  width: 38.2%;
-  /* padding: 15px 0px; */
-  border-left: #f0f0f0 1px solid;
-  animation: showSlip 1s linear 0s;
-  -webkit-animation: showSlip 0.15s linear 0s;
-  position: relative;
-  overflow: auto;
+    display: block;
+    width: 38.2%;
+    /* padding: 15px 0px; */
+    border-left: #f0f0f0 1px solid;
+    animation: showSlip 1s linear 0s;
+    -webkit-animation: showSlip 0.15s linear 0s;
+    position: relative;
+    overflow: auto;
 }
+
 @keyframes showSlip {
-  from {
-    opacity: 0;
-    width: 0;
-  }
-  to {
-    opacity: 1;
-    width: 38.2%;
-  }
+    from {
+        opacity: 0;
+        width: 0;
+    }
+    to {
+        opacity: 1;
+        width: 38.2%;
+    }
 }
+
 @keyframes removeSlip {
-  from {
-    opacity: 1;
-    width: 38.2%;
-  }
-  to {
-    opacity: 0;
-    width: 0;
-  }
+    from {
+        opacity: 1;
+        width: 38.2%;
+    }
+    to {
+        opacity: 0;
+        width: 0;
+    }
 }
+
 .half-left-circle {
-  width: 30px;
-  height: 60px;
-  line-height: 60px;
-  /* border: 1px solid #ccc; */
-  position: absolute;
-  border-radius: 30px 0 0 30px;
-  top: 40%;
-  right: 0;
-  animation: twinkling 2s infinite 0.9s ease-in-out alternate;
-  cursor: pointer;
+    width: 30px;
+    height: 60px;
+    line-height: 60px;
+    /* border: 1px solid #ccc; */
+    position: absolute;
+    border-radius: 30px 0 0 30px;
+    top: 40%;
+    right: 0;
+    animation: twinkling 2s infinite 0.9s ease-in-out alternate;
+    cursor: pointer;
 }
 
 .half-right-circle {
-  display: none;
-  width: 30px;
-  height: 60px;
-  line-height: 60px;
-  /* border: 1px solid #ccc; */
-  position: absolute;
-  top: 40%;
-  left: 61.8%;
-  border-radius: 0 30px 30px 0;
-  animation: twinkling 2s infinite 0.9s ease-in-out alternate;
-  cursor: pointer;
-  z-index: 11;
+    display: none;
+    width: 30px;
+    height: 60px;
+    line-height: 60px;
+    /* border: 1px solid #ccc; */
+    position: absolute;
+    top: 40%;
+    left: 61.8%;
+    border-radius: 0 30px 30px 0;
+    animation: twinkling 2s infinite 0.9s ease-in-out alternate;
+    cursor: pointer;
+    z-index: 11;
 }
+
 .half-left-circle img,
 .half-right-circle img {
-  vertical-align: middle;
-  width: 24px;
-  height: 24px;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
 }
+
 .uploader-list-title {
-  background-color: #d2297a;
-  line-height: 34px;
-  color: #fff;
-  padding: 5px;
-  padding-left: 20px;
+    background-color: #d2297a;
+    line-height: 34px;
+    color: #fff;
+    padding: 5px;
+    padding-left: 20px;
 }
 
 .uploader-list-none-item {
-  color: #999;
-  font-size: 14px;
-  margin: 15px 0;
+    color: #999;
+    font-size: 14px;
+    margin: 15px 0;
 }
 
 .uploader-row-list {
-  padding: 5px 20px;
+    padding: 5px 20px;
 }
 
 .uploader-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  color: #999;
-  padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #999;
+    padding-bottom: 5px;
 }
+
 .uploader-row-title {
-  flex: 1;
+    flex: 1;
 }
+
 /* Add styles here to customize the appearance of your app */
 ul {
-  color: #888;
+    color: #888;
 }
 
 .loading {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1px solid #bebebe;
-  border-left: 1px solid #498aca;
-  animation: load 1s linear infinite;
-  display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid #bebebe;
+    border-left: 1px solid #498aca;
+    animation: load 1s linear infinite;
+    display: inline-block;
 }
 
 .finish {
-  width: 15px;
-  height: 15px;
-  vertical-align: middle;
-  background-image: url(../../../assets/image/success.svg);
-  background-size: 100%;
-  background-repeat: no-repeat;
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+    background-image: url(../../../assets/image/success.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
 }
 
 @keyframes load {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @-webkit-keyframes twinkling {
-  /*透明度由0到1*/
-  0% {
-    opacity: 0.05; /*透明度为0*/
-  }
-  100% {
-    opacity: 1; /*透明度为1*/
-  }
+    /*透明度由0到1*/
+    0% {
+        opacity: 0.05; /*透明度为0*/
+    }
+    100% {
+        opacity: 1; /*透明度为1*/
+    }
 }
+
 @keyframes twinkling {
-  /*透明度由0到1*/
-  0% {
-    opacity: 0.05; /*透明度为0*/
-  }
-  100% {
-    opacity: 1; /*透明度为1*/
-  }
+    /*透明度由0到1*/
+    0% {
+        opacity: 0.05; /*透明度为0*/
+    }
+    100% {
+        opacity: 1; /*透明度为1*/
+    }
 }
 
 .footer-logout {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  padding: 0 10px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    padding: 0 10px;
 }
 
 .footer-content {
-  display: flex;
-  align-items: center;
-  flex: 1;
+    display: flex;
+    align-items: center;
+    flex: 1;
 }
 
 .footer-content-copyright {
-  flex: 1;
-  text-align: center;
-  align-items: center;
+    flex: 1;
+    text-align: center;
+    align-items: center;
 }
 
 .footer-content-setting {
-  display: flex;
-  min-width: 200px;
+    display: flex;
+    min-width: 200px;
 }
 
 .footer-content-setting-item {
-  display: flex;
-  height: 16px;
-  padding: 0 15px;
-  align-items: center;
-  border-right: #d8d8d8 1px solid;
+    display: flex;
+    height: 16px;
+    padding: 0 15px;
+    align-items: center;
+    border-right: #d8d8d8 1px solid;
 }
 
 .footer-content-setting-item-text {
-  padding: 0 3px;
+    padding: 0 3px;
 }
+
 .setting-success {
-  width: 12px;
+    width: 12px;
 }

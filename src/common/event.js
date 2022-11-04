@@ -7,5 +7,5 @@ const EventEmitter = require('events');
 const PageEvent = new EventEmitter();
 
 module.exports = {
-  PageEvent,
+    PageEvent,
 };
