@@ -11,7 +11,7 @@ module.exports = {
     TITLE: '登录',
     SIZE_WIDTH: 350,
     SIZE_HEIGHT: 550,
-    RESIZE: false,
+    RESIZE: true,
     PRELOAD: path.join(__dirname, '../inject/login.js'),
     LOAD_FILE: path.join(__dirname, '../windows/views/login.html'),
   },

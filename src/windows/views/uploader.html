@@ -1,211 +1,214 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8"/>
     <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';img-src 'self' data: *;font-src *"
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';img-src 'self' data: *;font-src *"
     />
-    <link href="../styles/uploader.css" rel="stylesheet" />
+    <link href="../styles/uploader.css" rel="stylesheet"/>
     <title>NetMusicUploader</title>
-  </head>
-  <body id="inbox">
-    <div class="container">
-      <div class="main">
+</head>
+<body id="inbox">
+<div class="container">
+    <div class="main">
         <!-- 上传区域 -->
         <div class="upload-block">
-          <div style="cursor: pointer">
-            <a href="#" title="点击上次文件">
-              <img
-                id="openFileSelect"
-                class="upload-image"
-                src="../../../assets/image/cloud-upload.svg"
-              />
-            </a>
-          </div>
-          <h3>· 点击上方图标选择音乐</h3>
-          <h3>· 将音乐拖拽到此处释放</h3>
-          <h3>· 复制音乐后粘贴到窗口</h3>
+            <div style="cursor: pointer">
+                <a href="#" title="点击上次文件">
+                    <img
+                            id="openFileSelect"
+                            class="upload-image"
+                            src="../../../assets/image/cloud-upload.svg"
+                    />
+                </a>
+            </div>
+            <h3>· 点击上方图标选择音乐</h3>
+            <h3>· 将音乐拖拽到此处释放</h3>
+            <h3>· 复制音乐后粘贴到窗口</h3>
         </div>
 
         <!-- 上传列表展示 -->
         <div class="half-left-circle" id="leftSlip">
-          <img src="../../../assets/image/left_slip.svg" title="查看列表" />
+            <img src="../../../assets/image/left_slip.svg" title="查看列表"/>
         </div>
         <div class="half-right-circle" id="rightSlip" title="收起">
-          <img src="../../../assets/image/right_slip.svg" />
+            <img src="../../../assets/image/right_slip.svg"/>
         </div>
         <div class="uploader-list-none-init" id="uploaderList">
-          <div class="uploader-list-title">上传列表</div>
-          <div class="uploader-row-list">
-            <div class="uploader-list-none-item">暂无上传记录哟～</div>
-            <ul id="uploader-list">
-              <!-- <li>
-                <div class="uploader-row">
-                  <div class="uploader-row-title">
-                    霍元甲-周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦
-                  </div>
-                  <div class="loading"></div>
-                </div>
-              </li> -->
+            <div class="uploader-list-title">上传列表</div>
+            <div class="uploader-row-list">
+                <div class="uploader-list-none-item">暂无上传记录哟～</div>
+                <ul id="uploader-list">
+                    <!-- <li>
+                      <div class="uploader-row">
+                        <div class="uploader-row-title">
+                          霍元甲-周杰伦周杰伦周杰伦周杰伦周杰伦周杰伦
+                        </div>
+                        <div class="loading"></div>
+                      </div>
+                    </li> -->
 
-              <!-- <li>
-                <div class="uploader-row">
-                  <div>霍元甲-周杰伦</div>
-                  <div class="finish"></div>
-                </div>
-              </li>
-              -->
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- 测试代码 -->
-      <!-- <div id="logout">退出登录</div> -->
-      <!-- <div id="autoSignIn">自动签到</div>
-      <div id="autoSignInCancel">取消自动签到</div>
-      <div id="autoListen">自动刷歌</div>
-      <div id="autoListenCancel">取消自动刷歌</div> -->
-
-      <div class="footer">
-        <div class="footer-content">
-          <div
-            class="footer-content-copyright"
-            style="cursor: pointer"
-            title="前往 github 仓库"
-            id="github"
-          ></div>
-          <div id="setting-loading">
-            <span>同步状态中···</span>
-            <div class="loading"></div>
-          </div>
-          <div id="setting-content" style="display: none">
-            <div class="footer-content-setting">
-              <div class="footer-content-setting-item">
-                <input type="checkbox" id="autoSignInBox" />
-                <span
-                  class="footer-content-setting-item-text"
-                  id="autoSignInText"
-                  >自动签到</span
-                >
-                <div
-                  class="loading"
-                  style="display: none"
-                  id="autoSignInLoading"
-                ></div>
-                <img
-                  class="setting-success"
-                  src="../../../assets/image/sign-in.svg"
-                  id="autoSignInSuccess"
-                  style="display: none"
-                />
-              </div>
-              <div class="footer-content-setting-item">
-                <input type="checkbox" id="autoListenBox" />
-                <span
-                  class="footer-content-setting-item-text"
-                  id="autoListenText"
-                  >自动刷歌</span
-                >
-                <div
-                  class="loading"
-                  style="display: none"
-                  id="autoListenLoading"
-                ></div>
-                <img
-                  class="setting-success"
-                  src="../../../assets/image/sign-in.svg"
-                  id="autoListenFinished"
-                  style="display: none"
-                />
-              </div>
+                    <!-- <li>
+                      <div class="uploader-row">
+                        <div>霍元甲-周杰伦</div>
+                        <div class="finish"></div>
+                      </div>
+                    </li>
+                    -->
+                </ul>
             </div>
-          </div>
-          <div class="footer-logout" id="logout" title="退出登录">
-            <img width="15px" src="../../../assets/image/logout.svg" />
-            <!-- <span>退出登录</span> -->
-          </div>
         </div>
-      </div>
     </div>
 
-    <!-- You can also require other files to run in this process -->
-    <script>
-      // 自动刷歌
-      const autoListenBox = document.querySelector('#autoListenBox');
-      autoListenBox.onclick = autoListenChange;
+    <!-- 测试代码 -->
+    <!-- <div id="logout">退出登录</div> -->
+    <!-- <div id="autoSignIn">自动签到</div>
+    <div id="autoSignInCancel">取消自动签到</div>
+    <div id="autoListen">自动刷歌</div>
+    <div id="autoListenCancel">取消自动刷歌</div> -->
 
-      function autoListenChange() {
+    <div class="footer">
+        <div class="footer-content">
+            <div
+                    class="footer-content-copyright"
+                    style="cursor: pointer"
+                    title="前往 github 仓库"
+                    id="github"
+            ></div>
+            <div id="setting-loading">
+                <span>同步状态中···</span>
+                <div class="loading"></div>
+            </div>
+            <div id="setting-content" style="display: none">
+                <div class="footer-content-setting">
+                    <div class="footer-content-setting-item">
+                        <input type="checkbox" id="autoSignInBox"/>
+                        <span
+                                class="footer-content-setting-item-text"
+                                id="autoSignInText"
+                        >自动签到</span
+                        >
+                        <div
+                                class="loading"
+                                style="display: none"
+                                id="autoSignInLoading"
+                        ></div>
+                        <img
+                                class="setting-success"
+                                src="../../../assets/image/sign-in.svg"
+                                id="autoSignInSuccess"
+                                style="display: none"
+                        />
+                    </div>
+                    <div class="footer-content-setting-item">
+                        <input type="checkbox" id="autoListenBox"/>
+                        <span
+                                class="footer-content-setting-item-text"
+                                id="autoListenText"
+                        >自动刷歌</span
+                        >
+                        <div
+                                class="loading"
+                                style="display: none"
+                                id="autoListenLoading"
+                        ></div>
+                        <img
+                                class="setting-success"
+                                src="../../../assets/image/sign-in.svg"
+                                id="autoListenFinished"
+                                style="display: none"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="footer-logout" id="logout" title="退出登录">
+                <img width="15px" src="../../../assets/image/logout.svg"/>
+                <!-- <span>退出登录</span> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- You can also require other files to run in this process -->
+<script>
+    // 自动刷歌
+    const autoListenBox = document.querySelector('#autoListenBox');
+    autoListenBox.onclick = autoListenChange;
+
+    function autoListenChange() {
         // console.log('listen', this.checked);
         if (this.checked) {
-          window.electronAPI.listen();
+            console.log('发送刷歌消息')
+            window.electronAPI.listen();
 
-          localStorage.setItem('autoListen', 1);
+            localStorage.setItem('autoListen', 1);
 
-          autoListenBox.checked = true;
-          autoListenText.innerHTML = '正在刷歌';
-          autoListenLoading.style.display = 'block';
-          autoListenFinished.style.display = 'none';
+            autoListenBox.checked = true;
+            autoListenText.innerHTML = '正在刷歌';
+            autoListenLoading.style.display = 'block';
+            autoListenFinished.style.display = 'none';
         } else {
-          localStorage.setItem('autoListen', 0);
+            localStorage.setItem('autoListen', 0);
         }
-      }
+    }
 
-      // // 自动签到
-      const autoSignInBox = document.querySelector('#autoSignInBox');
-      autoSignInBox.onclick = autoSignInChange;
+    // // 自动签到
+    const autoSignInBox = document.querySelector('#autoSignInBox');
+    autoSignInBox.onclick = autoSignInChange;
 
-      function autoSignInChange() {
+    function autoSignInChange() {
         // console.log('sign', this.checked);
         if (this.checked) {
-          window.electronAPI.signIn();
+            console.log('发送签到消息')
+            window.electronAPI.signIn();
 
-          localStorage.setItem('autoSignIn', 1);
+            localStorage.setItem('autoSignIn', 1);
 
-          autoSignInBox.checked = true;
-          autoSignInText.innerHTML = '同步中···';
-          autoSignInLoading.style.display = 'block';
-          autoSignInSuccess.style.display = 'none';
+            autoSignInBox.checked = true;
+            autoSignInText.innerHTML = '同步中···';
+            autoSignInLoading.style.display = 'block';
+            autoSignInSuccess.style.display = 'none';
         } else {
-          localStorage.setItem('autoSignIn', 0);
+            localStorage.setItem('autoSignIn', 0);
         }
-      }
+    }
 
-      // 退出登录
-      const logoutEle = document.querySelector('#logout');
-      logoutEle.onclick = logout;
+    // 退出登录
+    const logoutEle = document.querySelector('#logout');
+    logoutEle.onclick = logout;
 
-      function logout() {
+    function logout() {
         localStorage.clear();
         window.electronAPI.logout();
-      }
+    }
 
-      //
-      // 选择文件上传逻辑
-      const inbox = document.querySelector('#openFileSelect');
-      inbox.onclick = fileSelect;
+    //
+    // 选择文件上传逻辑
+    const inbox = document.querySelector('#openFileSelect');
+    inbox.onclick = fileSelect;
 
-      let wait = false;
-      function fileSelect(fn) {
+    let wait = false;
+
+    function fileSelect(fn) {
         // 判断之前的调用是否完成
         if (wait) {
-          return;
+            return;
         }
         window.electronAPI.fileSelect();
         timeout = {};
         wait = true;
         setTimeout(() => {
-          wait = false;
+            wait = false;
         }, 3000);
-      }
+    }
 
-      //
-      // 拖拽上传逻辑
-      const div = document.querySelector('#inbox');
+    //
+    // 拖拽上传逻辑
+    const div = document.querySelector('#inbox');
 
-      //绑定拖拽结束事件
-      div.addEventListener('drop', function (e) {
+    //绑定拖拽结束事件
+    div.addEventListener('drop', function (e) {
         //必须要阻止拖拽的默认事件
         e.preventDefault();
         e.stopPropagation();
@@ -215,45 +218,47 @@
         const fileList = [];
 
         for (let i = 0; i < files.length; i++) {
-          fileList.push(files[i].path);
+            fileList.push(files[i].path);
         }
 
         window.electronAPI.dragSelect(fileList);
-      });
+    });
 
-      //绑定拖拽文件在容器移动事件
-      div.addEventListener('dragover', (e) => {
+    //绑定拖拽文件在容器移动事件
+    div.addEventListener('dragover', (e) => {
         //必须要阻止拖拽的默认事件
         e.preventDefault();
         e.stopPropagation();
-      });
-      const leftSlip = document.querySelector('#leftSlip');
-      const rightSlip = document.querySelector('#rightSlip');
-      const uploaderList = document.querySelector('#uploaderList');
-      leftSlip.onclick = leftClick;
-      rightSlip.onclick = rightClick;
-      function leftClick() {
+    });
+    const leftSlip = document.querySelector('#leftSlip');
+    const rightSlip = document.querySelector('#rightSlip');
+    const uploaderList = document.querySelector('#uploaderList');
+    leftSlip.onclick = leftClick;
+    rightSlip.onclick = rightClick;
+
+    function leftClick() {
         leftSlip.style.display = 'none';
         rightSlip.style.display = 'block';
         uploaderList.setAttribute('class', 'uploader-list');
-      }
-      function rightClick() {
+    }
+
+    function rightClick() {
         leftSlip.style.display = 'block';
         rightSlip.style.display = 'none';
         uploaderList.setAttribute('class', 'uploader-list-none');
-      }
+    }
 
-      const github = document.querySelector('#github');
-      github.onclick = function () {
+    const github = document.querySelector('#github');
+    github.onclick = function () {
         const res = confirm(
-          '确定前往github仓库吗 ？ 用你的肉嘟嘟的小手点个star，作者会开心一整天，感谢 ～～'
+            '确定前往github仓库吗 ？ 用你的肉嘟嘟的小手点个star，作者会开心一整天，感谢 ～～'
         );
         if (res) {
-          window.electronAPI.openUrl(
-            'https://github.com/lulu-ls/cloud-uploader'
-          );
+            window.electronAPI.openUrl(
+                'https://github.com/lulu-ls/cloud-uploader'
+            );
         }
-      };
-    </script>
-  </body>
+    };
+</script>
+</body>
 </html>

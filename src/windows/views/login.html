@@ -1,188 +1,188 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8"/>
     <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';img-src 'self' data: *;font-src *"
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';img-src 'self' data: *;font-src *"
     />
-    <link href="../styles/login.css" rel="stylesheet" />
+    <link href="../styles/login.css" rel="stylesheet"/>
     <title>NetMusicUploader</title>
-  </head>
-  <body>
-    <div>
-      <!-- <input id="qrcodeInput" style="display: none" /> -->
-      <div id="login-by-qr" class="login">
+</head>
+<body>
+<div>
+    <!-- <input id="qrcodeInput" style="display: none" /> -->
+    <div id="login-by-qr" class="login">
         <div class="login-title text-center">扫码登录</div>
         <div class="qr-code">
-          <img id="qrcode" width="200px" />
+            <img id="qrcode" width="200px"/>
         </div>
         <div class="login-foot" id="foot">
-          请使用<span style="color: #1875bf">网易云音乐APP</span>扫码
+            请使用<span style="color: #1875bf">网易云音乐APP</span>扫码
         </div>
 
         <div id="login-by-other" class="account-login-content-other">
-          <div
-            id="login-phone"
-            class="account-login-content-other-item"
-            style="cursor: pointer"
-            title="手机登录"
-          >
-            <span title="手机登录">手机登录</span>
-            <img
-              class="account-login-content-img"
-              src="../../../assets/image/left.svg"
-            />
-          </div>
-          <div
-            id="login-email"
-            class="account-login-content-other-item"
-            style="cursor: pointer"
-            title="邮箱登录"
-          >
-            <span title="邮箱登录" style="margin-left: 18px"
-              ><a>邮箱登录</a></span
+            <div
+                    id="login-phone"
+                    class="account-login-content-other-item"
+                    style="cursor: pointer"
+                    title="手机登录"
             >
-            <img
-              class="account-login-content-img"
-              src="../../../assets/image/left.svg"
-            />
-          </div>
+                <span title="手机登录">手机登录</span>
+                <img
+                        class="account-login-content-img"
+                        src="../../../assets/image/left.svg"
+                />
+            </div>
+            <div
+                    id="login-email"
+                    class="account-login-content-other-item"
+                    style="cursor: pointer"
+                    title="邮箱登录"
+            >
+            <span title="邮箱登录" style="margin-left: 18px"
+            ><a>邮箱登录</a></span
+            >
+                <img
+                        class="account-login-content-img"
+                        src="../../../assets/image/left.svg"
+                />
+            </div>
         </div>
-      </div>
-
-      <div id="login-by-phone" class="login">
-        <div class="login-title text-center">手机号登录</div>
-        <div class="account-login-content">
-          <div>
-            <input
-              id="login-by-phone-account"
-              type="number"
-              placeholder="请输入手机号码"
-            />
-            <input
-              id="login-by-phone-password"
-              type="password"
-              placeholder="请输入密码"
-            />
-            <input
-              id="login-by-phone-btn"
-              type="button"
-              value="登录"
-              class="login-button"
-            />
-          </div>
-        </div>
-        <div
-          id="login-qr-2"
-          title="返回扫码登录"
-          class="login-foot"
-          style="cursor: pointer"
-        >
-          <span style="color: #1875bf">使用扫码登录更安全</span>
-          <img
-            class="account-login-content-img"
-            src="../../../assets/image/left-blue.svg"
-          />
-        </div>
-      </div>
-
-      <div id="login-by-email" class="login">
-        <div class="login-title text-center">邮箱登录</div>
-        <div class="account-login-content">
-          <div>
-            <input
-              id="login-by-email-account"
-              type="email"
-              placeholder="请输入邮箱"
-            />
-            <input
-              id="login-by-email-password"
-              type="password"
-              placeholder="请输入密码"
-            />
-            <input
-              id="login-by-email-btn"
-              type="button"
-              value="登录"
-              class="login-button"
-            />
-          </div>
-        </div>
-        <div
-          id="login-qr-1"
-          title="返回扫码登录"
-          class="login-foot"
-          style="cursor: pointer"
-        >
-          <span style="color: #1875bf">使用扫码登录更安全</span>
-          <img
-            class="account-login-content-img"
-            src="../../../assets/image/left-blue.svg"
-          />
-        </div>
-      </div>
     </div>
 
-    <!-- You can also require other files to run in this process -->
-    <script>
-      const LOGIN_ACCOUNT_TYPE_CODE = 0; // 二维码登录
-      const LOGIN_ACCOUNT_TYPE_PHONE = 1; // 手机号登录
-      const LOGIN_ACCOUNT_TYPE_EMAIL = 2; // 邮箱登录
+    <div id="login-by-phone" class="login">
+        <div class="login-title text-center">手机号登录</div>
+        <div class="account-login-content">
+            <div>
+                <input
+                        id="login-by-phone-account"
+                        type="number"
+                        placeholder="请输入手机号码"
+                />
+                <input
+                        id="login-by-phone-password"
+                        type="password"
+                        placeholder="请输入密码"
+                />
+                <input
+                        id="login-by-phone-btn"
+                        type="button"
+                        value="登录"
+                        class="login-button"
+                />
+            </div>
+        </div>
+        <div
+                id="login-qr-2"
+                title="返回扫码登录"
+                class="login-foot"
+                style="cursor: pointer"
+        >
+            <span style="color: #1875bf">使用扫码登录更安全</span>
+            <img
+                    class="account-login-content-img"
+                    src="../../../assets/image/left-blue.svg"
+            />
+        </div>
+    </div>
 
-      const eleLoginPhone = document.querySelector('#login-phone');
-      eleLoginPhone.onclick = eleLoginPhoneClick;
+    <div id="login-by-email" class="login">
+        <div class="login-title text-center">邮箱登录</div>
+        <div class="account-login-content">
+            <div>
+                <input
+                        id="login-by-email-account"
+                        type="email"
+                        placeholder="请输入邮箱"
+                />
+                <input
+                        id="login-by-email-password"
+                        type="password"
+                        placeholder="请输入密码"
+                />
+                <input
+                        id="login-by-email-btn"
+                        type="button"
+                        value="登录"
+                        class="login-button"
+                />
+            </div>
+        </div>
+        <div
+                id="login-qr-1"
+                title="返回扫码登录"
+                class="login-foot"
+                style="cursor: pointer"
+        >
+            <span style="color: #1875bf">使用扫码登录更安全</span>
+            <img
+                    class="account-login-content-img"
+                    src="../../../assets/image/left-blue.svg"
+            />
+        </div>
+    </div>
+</div>
 
-      function eleLoginPhoneClick() {
+<!-- You can also require other files to run in this process -->
+<script>
+    const LOGIN_ACCOUNT_TYPE_CODE = 0; // 二维码登录
+    const LOGIN_ACCOUNT_TYPE_PHONE = 1; // 手机号登录
+    const LOGIN_ACCOUNT_TYPE_EMAIL = 2; // 邮箱登录
+
+    const eleLoginPhone = document.querySelector('#login-phone');
+    eleLoginPhone.onclick = eleLoginPhoneClick;
+
+    function eleLoginPhoneClick() {
         localStorage.setItem('loginType', LOGIN_ACCOUNT_TYPE_PHONE);
         window.electronAPI.initType();
-      }
+    }
 
-      const eleLoginEmail = document.querySelector('#login-email');
-      eleLoginEmail.onclick = eleLoginEmailClick;
+    const eleLoginEmail = document.querySelector('#login-email');
+    eleLoginEmail.onclick = eleLoginEmailClick;
 
-      function eleLoginEmailClick() {
+    function eleLoginEmailClick() {
         localStorage.setItem('loginType', LOGIN_ACCOUNT_TYPE_EMAIL);
         window.electronAPI.initType();
-      }
+    }
 
-      const eleLoginQr1 = document.querySelector('#login-qr-1');
-      const eleLoginQr2 = document.querySelector('#login-qr-2');
-      eleLoginQr1.onclick = eleLoginQrClick;
-      eleLoginQr2.onclick = eleLoginQrClick;
+    const eleLoginQr1 = document.querySelector('#login-qr-1');
+    const eleLoginQr2 = document.querySelector('#login-qr-2');
+    eleLoginQr1.onclick = eleLoginQrClick;
+    eleLoginQr2.onclick = eleLoginQrClick;
 
-      function eleLoginQrClick() {
+    function eleLoginQrClick() {
         localStorage.setItem('loginType', LOGIN_ACCOUNT_TYPE_CODE);
         window.electronAPI.initType();
-      }
+    }
 
-      const eleLoginByPhoneBtn = document.querySelector('#login-by-phone-btn');
-      eleLoginByPhoneBtn.onclick = eleLoginByPhoneBtnClick;
+    const eleLoginByPhoneBtn = document.querySelector('#login-by-phone-btn');
+    eleLoginByPhoneBtn.onclick = eleLoginByPhoneBtnClick;
 
-      function eleLoginByPhoneBtnClick() {
+    function eleLoginByPhoneBtnClick() {
         // console.log('手机号登录');
         const account = document.querySelector('#login-by-phone-account');
         const password = document.querySelector('#login-by-phone-password');
         window.electronAPI.loginByAccount({
-          account: account.value,
-          password: password.value,
-          type: LOGIN_ACCOUNT_TYPE_PHONE,
+            account: account.value,
+            password: password.value,
+            type: LOGIN_ACCOUNT_TYPE_PHONE,
         });
-      }
+    }
 
-      const eleLoginByEmailBtn = document.querySelector('#login-by-email-btn');
-      eleLoginByEmailBtn.onclick = eleLoginByEmailBtnClick;
+    const eleLoginByEmailBtn = document.querySelector('#login-by-email-btn');
+    eleLoginByEmailBtn.onclick = eleLoginByEmailBtnClick;
 
-      function eleLoginByEmailBtnClick() {
+    function eleLoginByEmailBtnClick() {
         // console.log('邮箱登录');
         const account = document.querySelector('#login-by-email-account');
         const password = document.querySelector('#login-by-email-password');
         window.electronAPI.loginByAccount({
-          account: account.value,
-          password: password.value,
-          type: LOGIN_ACCOUNT_TYPE_EMAIL,
+            account: account.value,
+            password: password.value,
+            type: LOGIN_ACCOUNT_TYPE_EMAIL,
         });
-      }
-    </script>
-  </body>
+    }
+</script>
+</body>
 </html>
