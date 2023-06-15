@@ -35,7 +35,7 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^24.1.2",
-    "electron-builder": "^23.6.0"
+    "electron-builder": "^24.4.0"
   },
   "dependencies": {
     "NeteaseCloudMusicApi": "^4.8.10",
