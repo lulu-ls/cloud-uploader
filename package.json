@@ -34,7 +34,7 @@
   ],
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^24.1.2",
+    "electron": "^26.3.0",
     "electron-builder": "^23.6.0"
   },
   "dependencies": {
