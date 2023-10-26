@@ -38,7 +38,7 @@
     "electron-builder": "^23.6.0"
   },
   "dependencies": {
-    "NeteaseCloudMusicApi": "^4.10.2",
+    "NeteaseCloudMusicApi": "^4.13.6",
     "electron-clipboard-ex": "^1.3.3",
     "electron-store": "^8.1.0"
   }
