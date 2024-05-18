@@ -26,6 +26,7 @@ class Api {
             return;
         }
         option.proxy = this.proxy;
+        this.cookie = this.getCookie(); // 重新获取cookie
         option.cookie = this.cookie;
 
         if (!CloudApi[name]) {
