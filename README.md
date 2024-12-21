@@ -73,6 +73,11 @@ npm run pkg_linux
 ## 已知问题
  - M1 可能长时间等待，无法上传（多人反馈，不确定是否为 100%，而且目前还没找到原因）
 
+## 作者其他项目
+
+- [video-downloader](https://github.com/lulu-ls/video-downloader) 可视化视频下载器，支持 B站、抖音、快手、小红书的音视频下载
+
+
 ## 本项目参考以下资料
 
 ### 写法思路和上传的 API 参考下面的项目，感谢大佬~
